@@ -1,3 +1,4 @@
+/* Container for the sign-in page */
 .signin-container {
   min-height: 100vh;
   background: linear-gradient(to right, #f8f8f8, #e7dccf);
@@ -5,29 +6,37 @@
   justify-content: center;
   align-items: center;
   font-family: 'Segoe UI', sans-serif;
+  padding: 20px; /* extra padding for small screens */
 }
 
+/* Sign-in card */
 .signin-card {
   width: 400px;
+  max-width: 100%;
   background: #fff;
   padding: 35px;
   border-radius: 16px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-  text-align: center; /* center content inside card */
+  text-align: center; /* center all content inside card */
+  box-sizing: border-box;
 }
 
-/* SIGN-IN LOGO */
+/* Circular logo at the top */
 .signin-logo {
-  width: 180px;          /* bigger size */
-  height: 180px;         /* square for perfect circle */
-  border-radius: 50%;    /* circular shape */
-  object-fit: cover;     /* fill circle without distortion */
-  margin: 0 auto 25px auto; /* center and add spacing below */
+  width: 180px;             /* large size */
+  height: 180px;            /* square for perfect circle */
+  border-radius: 50%;       /* circular shape */
+  object-fit: cover;        /* fill circle without distortion */
+  margin: 0 auto 25px auto; /* center and space below */
   display: block;
 }
 
+/* Headings and subtitles */
 .signin-card h2 {
   margin-bottom: 5px;
+  font-size: 28px;
+  font-weight: 700;
+  color: #111;
 }
 
 .subtitle {
@@ -36,16 +45,19 @@
   font-size: 14px;
 }
 
+/* Form styling */
 form {
   display: flex;
   flex-direction: column;
-  text-align: left; /* keep input labels left-aligned */
+  text-align: left; /* keep labels left-aligned */
 }
 
 label {
   font-size: 14px;
   margin-bottom: 5px;
   margin-top: 15px;
+  font-weight: 500;
+  color: #333;
 }
 
 input {
@@ -53,6 +65,7 @@ input {
   border-radius: 8px;
   border: 1px solid #ddd;
   font-size: 14px;
+  transition: border-color 0.3s ease;
 }
 
 input:focus {
@@ -60,6 +73,7 @@ input:focus {
   border-color: #f15a00;
 }
 
+/* Password toggle */
 .password-wrapper {
   position: relative;
 }
@@ -74,6 +88,7 @@ input:focus {
   font-weight: 600;
 }
 
+/* Sign-in button */
 button {
   margin-top: 25px;
   padding: 14px;
@@ -84,16 +99,18 @@ button {
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  transition: 0.3s ease;
+  transition: background 0.3s ease;
 }
 
 button:hover {
   background: #d94e00;
 }
 
+/* Signup link text */
 .signup-text {
   margin-top: 20px;
   font-size: 14px;
+  text-align: center;
 }
 
 .signup-text a {
@@ -102,7 +119,7 @@ button:hover {
   text-decoration: none;
 }
 
-/* RESPONSIVE */
+/* Responsive adjustments */
 @media (max-width: 500px) {
   .signin-card {
     width: 90%;
@@ -113,5 +130,9 @@ button:hover {
     width: 140px;
     height: 140px;
     margin-bottom: 20px;
+  }
+
+  .signin-card h2 {
+    font-size: 24px;
   }
 }
