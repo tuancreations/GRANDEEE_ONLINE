@@ -2,6 +2,14 @@
   font-family: 'Segoe UI', sans-serif;
 }
 
+/* Make all logos/images circular */
+.landing-page img {
+  width: 150px;          /* standard size, adjust as needed */
+  height: 150px;         /* ensure square for perfect circle */
+  border-radius: 50%;    /* circular shape */
+  object-fit: cover;     /* fill circle without distortion */
+}
+
 /* HERO SECTION */
 .hero {
   display: flex;
@@ -17,7 +25,6 @@
 }
 
 .landing-logo {
-  width: 180px;
   margin-bottom: 30px;
 }
 
@@ -88,10 +95,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.hero-circle img {
-  width: 140px;
 }
 
 /* FEATURES */
