@@ -11,7 +11,7 @@ const Header = () => {
       <div className="header-container">
 
         {/* Logo */}
-        <Link to="/" className="logo-link">
+        <Link to="/home" className="logo-link">
           <img src={logoImg} alt="Grandee Online" className="logo" />
         </Link>
 
@@ -34,7 +34,7 @@ const Header = () => {
 
         {/* Navigation */}
         <nav className="header-nav">
-          <Link to="/" className="nav-link">Home</Link>
+          <Link to="/home" className="nav-link">Home</Link>
           <Link to="/shops" className="nav-link">All Shops</Link>
           <Link to="/signin" className="nav-link">Sign In</Link>
         </nav>
