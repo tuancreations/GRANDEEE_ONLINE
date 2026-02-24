@@ -1,5 +1,7 @@
 import { useNavigate, Link } from "react-router-dom";
 import { useState } from "react";
+import { useApp } from "../contexts/AppContext";
+import logoImg from "../assets/file_00000000b15871f48aee870982fc872f.png";
 import "./SignIn.css";
 
 const SignIn = () => {
@@ -9,6 +11,9 @@ const SignIn = () => {
   return (
     <div className="signin-container">
       <div className="signin-card">
+        {/* Logo */}
+        <img src={logoImg} alt="Grandee Online" className="signin-logo" />
+
         <h2>Welcome Back</h2>
         <p className="subtitle">Sign in to continue to Grandee</p>
 
@@ -27,7 +32,6 @@ const SignIn = () => {
             </span>
           </div>
 
-          {/* 👇 THIS is the key line */}
           <button type="button" onClick={() => navigate("/home")}>
             Sign In
           </button>
