@@ -13,15 +13,24 @@
   padding: 35px;
   border-radius: 16px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  text-align: center; /* center content inside card */
+}
+
+/* SIGN-IN LOGO */
+.signin-logo {
+  width: 180px;          /* bigger size */
+  height: 180px;         /* square for perfect circle */
+  border-radius: 50%;    /* circular shape */
+  object-fit: cover;     /* fill circle without distortion */
+  margin: 0 auto 25px auto; /* center and add spacing below */
+  display: block;
 }
 
 .signin-card h2 {
-  text-align: center;
   margin-bottom: 5px;
 }
 
 .subtitle {
-  text-align: center;
   color: #666;
   margin-bottom: 25px;
   font-size: 14px;
@@ -30,6 +39,7 @@
 form {
   display: flex;
   flex-direction: column;
+  text-align: left; /* keep input labels left-aligned */
 }
 
 label {
@@ -82,7 +92,6 @@ button:hover {
 }
 
 .signup-text {
-  text-align: center;
   margin-top: 20px;
   font-size: 14px;
 }
@@ -91,4 +100,18 @@ button:hover {
   color: #f15a00;
   font-weight: 600;
   text-decoration: none;
+}
+
+/* RESPONSIVE */
+@media (max-width: 500px) {
+  .signin-card {
+    width: 90%;
+    padding: 25px;
+  }
+
+  .signin-logo {
+    width: 140px;
+    height: 140px;
+    margin-bottom: 20px;
+  }
 }
