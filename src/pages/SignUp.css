@@ -1,0 +1,167 @@
+.signup-page {
+  min-height: 100vh;
+  background: linear-gradient(to right, #f8f8f8, #e7dccf);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 60px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.signup-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.signup-logo {
+  width: 104px;
+  height: 104px;
+  border-radius: 20px;
+  object-fit: contain;
+  background: #fff;
+  padding: 0.45rem;
+  margin: 0 auto 15px;
+  box-shadow: 0 12px 26px rgba(0, 0, 0, 0.12);
+  display: block;
+}
+
+.signup-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.signup-header h1 span {
+  color: #f15a00;
+}
+
+.tagline {
+  color: #555;
+  font-size: 14px;
+}
+
+.signup-card {
+  width: 420px;
+  max-width: 100%;
+  background: white;
+  padding: 35px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+.signup-card h2 {
+  text-align: center;
+  margin-bottom: 5px;
+}
+
+.subtitle {
+  text-align: center;
+  color: #666;
+  margin-bottom: 25px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  font-size: 14px;
+  margin-bottom: 5px;
+  margin-top: 15px;
+}
+
+input {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+}
+
+input:focus {
+  outline: none;
+  border-color: #f15a00;
+}
+
+.role-select {
+  display: flex;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.role-card {
+  flex: 1;
+  padding: 15px;
+  text-align: center;
+  border-radius: 10px;
+  border: 2px solid #ddd;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.role-card h3 {
+  margin: 0;
+}
+
+.role-card p {
+  font-size: 13px;
+  color: #777;
+}
+
+.role-card.active {
+  border-color: #f15a00;
+  background: #fff6f1;
+}
+
+.create-btn {
+  margin-top: 25px;
+  padding: 14px;
+  background: linear-gradient(135deg, #f15a00, #c94700);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 10px 20px rgba(171, 67, 27, 0.24);
+  min-height: 48px;
+}
+
+.create-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 26px rgba(171, 67, 27, 0.32);
+}
+
+.signin-link {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.signin-link a {
+  color: #f15a00;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+@media (max-width: 500px) {
+  .signup-page {
+    padding-top: 36px;
+  }
+
+  .signup-card {
+    width: 90%;
+    padding: 22px;
+  }
+
+  .signup-logo {
+    width: 86px;
+    height: 86px;
+    margin-bottom: 12px;
+  }
+
+  .role-select {
+    flex-direction: column;
+    gap: 10px;
+  }
+}

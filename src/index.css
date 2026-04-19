@@ -1,0 +1,93 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@500;600;700;800&display=swap');
+
+:root {
+  --bg-canvas: #f7efe4;
+  --bg-soft: #fffaf4;
+  --surface: #ffffff;
+  --surface-tint: #f7f0e8;
+  --text-strong: #1e1c19;
+  --text-muted: #655f57;
+  --brand: #d45b2b;
+  --brand-deep: #ab431b;
+  --accent: #0f8a7a;
+  --line: #e8dac7;
+  --ring: rgba(15, 138, 122, 0.35);
+  --radius-lg: 18px;
+  --radius-md: 12px;
+  --shadow-sm: 0 8px 20px rgba(36, 24, 16, 0.08);
+  --shadow-lg: 0 28px 60px rgba(36, 24, 16, 0.14);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  color: var(--text-strong);
+  background:
+    radial-gradient(circle at 10% 10%, rgba(212, 91, 43, 0.09), transparent 30%),
+    radial-gradient(circle at 90% 20%, rgba(15, 138, 122, 0.08), transparent 28%),
+    var(--bg-canvas);
+  font-family: 'Manrope', 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  font-family: 'Sora', 'Manrope', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+p {
+  margin: 0;
+  line-height: 1.65;
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+input:focus-visible,
+button:focus-visible,
+a:focus-visible {
+  outline: 3px solid var(--ring);
+  outline-offset: 2px;
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
