@@ -1,0 +1,95 @@
+.market-footer {
+  margin-top: 1.2rem;
+  border-top: 1px solid var(--line);
+  background: #fff;
+  box-shadow: 0 -10px 24px rgba(30, 20, 10, 0.08);
+}
+
+.market-footer-inner {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0.9rem 1rem 1rem;
+}
+
+.footer-quick-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.footer-quick-links a,
+.profile-dropdown button {
+  border-radius: 999px;
+  padding: 0.4rem 0.75rem;
+  background: #f7eee7;
+  color: #5b4c3f;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.profile-dropdown {
+  position: relative;
+}
+
+.profile-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  min-width: 190px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: #fff;
+  box-shadow: 0 12px 24px rgba(30, 20, 10, 0.12);
+  display: grid;
+  padding: 0.4rem;
+  z-index: 1200;
+}
+
+.profile-menu a {
+  border-radius: 8px;
+  padding: 0.45rem 0.55rem;
+  background: transparent;
+}
+
+.profile-menu a:hover {
+  background: #fff4eb;
+}
+
+.footer-partitions {
+  margin-top: 0.6rem;
+  display: flex;
+  gap: 0.45rem;
+  overflow-x: auto;
+  padding-bottom: 0.2rem;
+}
+
+.partition-button {
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: #5d5348;
+  font-size: 0.76rem;
+  font-weight: 700;
+  white-space: nowrap;
+  padding: 0.4rem 0.75rem;
+}
+
+.partition-button.active {
+  border-color: transparent;
+  color: #fff;
+  background: linear-gradient(135deg, var(--brand), var(--brand-deep));
+}
+
+.seller-footer p {
+  color: var(--text-muted);
+  font-size: 0.84rem;
+}
+
+@media (max-width: 760px) {
+  .market-footer {
+    position: sticky;
+    bottom: 0;
+    z-index: 1090;
+  }
+}

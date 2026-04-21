@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { mockShops } from '../data/mockData';
 import type { Product } from '../data/mockData';
+import { useApp } from '../contexts/AppContext';
 import './ProductCard.css';
 
 type ProductCardProps = {
@@ -8,11 +9,15 @@ type ProductCardProps = {
 };
 
 const ProductCard = ({ product }: ProductCardProps) => {
+  const { addToCart, toggleWishlist, isInWishlist } = useApp();
   const shop = mockShops.find(s => s.id === product.shopId);
 
   if (!shop) {
     return null;
   }
+
+  const isRequestOrder = shop.tradeMode === 'request';
+  const wishlistActive = isInWishlist(product.id);
 
   return (
     <div className="product-card">
@@ -24,6 +29,12 @@ const ProductCard = ({ product }: ProductCardProps) => {
       <div className="product-details">
         <h3 className="product-name">{product.name}</h3>
         <p className="product-category">{product.category}</p>
+
+        <div className="product-tags">
+          <span className="product-tag">{shop.segment.replace('-', ' ')}</span>
+          {isRequestOrder && <span className="product-tag request">Order request</span>}
+          {product.minimumOrderQty && <span className="product-tag">MOQ {product.minimumOrderQty}</span>}
+        </div>
 
         <div className="product-price">
           <span className="price-value">
@@ -42,8 +53,15 @@ const ProductCard = ({ product }: ProductCardProps) => {
         </Link>
 
         <Link to={`/shop/${shop.id}`} className="view-shop-btn">
-          Request Quote / Negotiate
+          {isRequestOrder ? 'Place Order Request' : 'Request Quote / Negotiate'}
         </Link>
+
+        <div className="product-quick-actions">
+          <button onClick={() => addToCart(product.id)}>Add to Cart</button>
+          <button className={wishlistActive ? 'active' : ''} onClick={() => toggleWishlist(product.id)}>
+            {wishlistActive ? 'In Wishlist' : 'Wishlist'}
+          </button>
+        </div>
       </div>
     </div>
   );

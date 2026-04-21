@@ -70,6 +70,11 @@ const ShopDetail = () => {
 
               <p className="shop-description-text">{shop.description}</p>
 
+              <p className="shop-description-text">
+                Segment: {shop.segment.replace('-', ' ')}
+                {shop.tradeMode === 'request' && ' | This seller accepts order requests and confirms delivery schedule after review.'}
+              </p>
+
               <div className="shop-meta">
                 <div className="meta-item">
                   <span className="rating-large">★ {shop.rating}</span>
@@ -83,6 +88,13 @@ const ShopDetail = () => {
                   <span>{shop.location.country}</span>
                 </div>
               </div>
+
+              {shop.tradeMode === 'request' && (
+                <div className="request-order-note">
+                  <p>{shop.minimumOrderNote || 'Large quantity or scheduled requests only.'}</p>
+                  <p>{shop.deliveryScheduleNote || 'Seller will communicate delivery date after approving the request.'}</p>
+                </div>
+              )}
             </div>
           </div>
         </div>

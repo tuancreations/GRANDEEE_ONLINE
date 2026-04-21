@@ -1,13 +1,15 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import type { Shop } from '../data/mockData';
+import type { Product, SellerSegment, Shop } from '../data/mockData';
+import { mockProducts } from '../data/mockData';
 
 type CommunicationType = 'chat' | 'voice' | 'video';
 type UserRole = 'buyer' | 'seller';
 
-type User = {
+export type User = {
   name?: string;
   email: string;
   role: UserRole;
+  sellerType?: SellerSegment;
 };
 
 const USER_STORAGE_KEY = 'grandee_user';
@@ -64,6 +66,18 @@ type ActiveCommunication = {
   startTime: number;
 };
 
+type CartItem = {
+  productId: number;
+  quantity: number;
+};
+
+export type BuyerMarketPartition =
+  | 'retail'
+  | 'manufacturer-distributor'
+  | 'wholesale-farmer'
+  | 'professional-services'
+  | 'institution';
+
 type AppContextType = {
   user: User | null;
   setUser: (user: User | null) => void;
@@ -80,6 +94,18 @@ type AppContextType = {
   startCommunication: (shop: Shop, type: CommunicationType) => void;
   endCommunication: () => void;
   updateSellerLocation: () => void;
+  cartItems: CartItem[];
+  wishlistItems: number[];
+  cartCount: number;
+  wishlistCount: number;
+  getProductById: (id: number) => Product | undefined;
+  addToCart: (productId: number) => void;
+  removeFromCart: (productId: number) => void;
+  updateCartQuantity: (productId: number, quantity: number) => void;
+  toggleWishlist: (productId: number) => void;
+  isInWishlist: (productId: number) => boolean;
+  buyerMarketPartition: BuyerMarketPartition;
+  setBuyerMarketPartition: (partition: BuyerMarketPartition) => void;
 };
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -140,6 +166,9 @@ export const AppProvider = ({ children }: AppProviderProps) => {
   const [sellerLocation, setSellerLocation] = useState<SellerLocation | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All Categories');
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [wishlistItems, setWishlistItems] = useState<number[]>([]);
+  const [buyerMarketPartition, setBuyerMarketPartition] = useState<BuyerMarketPartition>('retail');
 
   useEffect(() => {
     if (typeof window === 'undefined') {
@@ -176,6 +205,50 @@ export const AppProvider = ({ children }: AppProviderProps) => {
       });
     }
   };
+
+  const getProductById = (id: number) => mockProducts.find((item) => item.id === id);
+
+  const addToCart = (productId: number) => {
+    setCartItems((prev) => {
+      const existing = prev.find((item) => item.productId === productId);
+      if (existing) {
+        return prev.map((item) =>
+          item.productId === productId ? { ...item, quantity: item.quantity + 1 } : item
+        );
+      }
+      return [...prev, { productId, quantity: 1 }];
+    });
+  };
+
+  const removeFromCart = (productId: number) => {
+    setCartItems((prev) => prev.filter((item) => item.productId !== productId));
+  };
+
+  const updateCartQuantity = (productId: number, quantity: number) => {
+    if (quantity <= 0) {
+      removeFromCart(productId);
+      return;
+    }
+
+    setCartItems((prev) =>
+      prev.map((item) =>
+        item.productId === productId ? { ...item, quantity } : item
+      )
+    );
+  };
+
+  const toggleWishlist = (productId: number) => {
+    setWishlistItems((prev) =>
+      prev.includes(productId)
+        ? prev.filter((id) => id !== productId)
+        : [...prev, productId]
+    );
+  };
+
+  const isInWishlist = (productId: number) => wishlistItems.includes(productId);
+
+  const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
+  const wishlistCount = wishlistItems.length;
 
   const addSellerListing = (listing: Omit<SellerListing, 'id' | 'createdAt' | 'isActive'>) => {
     setSellerListings((prev) => [
@@ -228,7 +301,19 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     setSelectedCategory,
     startCommunication,
     endCommunication,
-    updateSellerLocation
+    updateSellerLocation,
+    cartItems,
+    wishlistItems,
+    cartCount,
+    wishlistCount,
+    getProductById,
+    addToCart,
+    removeFromCart,
+    updateCartQuantity,
+    toggleWishlist,
+    isInWishlist,
+    buyerMarketPartition,
+    setBuyerMarketPartition
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

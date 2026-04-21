@@ -77,7 +77,20 @@ input {
   font-size: 14px;
 }
 
+select {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  background: #fff;
+}
+
 input:focus {
+  outline: none;
+  border-color: #f15a00;
+}
+
+select:focus {
   outline: none;
   border-color: #f15a00;
 }

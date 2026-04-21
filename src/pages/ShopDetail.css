@@ -92,6 +92,19 @@
   margin-bottom: 1rem;
 }
 
+.request-order-note {
+  border-radius: 12px;
+  border: 1px solid #ffd9c6;
+  background: #fff5ee;
+  padding: 0.7rem;
+}
+
+.request-order-note p {
+  color: #7a5a45;
+  font-size: 0.85rem;
+  margin-top: 0.2rem;
+}
+
 .shop-meta {
   display: flex;
   gap: 2rem;

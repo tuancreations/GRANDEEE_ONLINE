@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useApp } from "../contexts/AppContext";
+import type { SellerSegment } from "../data/mockData";
 import logoImg from "../assets/grandee-online-logo.jpeg";
 import "./SignUp.css";
 
@@ -11,6 +12,7 @@ const SignUp = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [sellerType, setSellerType] = useState<SellerSegment>('retailer');
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -23,7 +25,8 @@ const SignUp = () => {
     setUser({
       name: name.trim(),
       email: email.trim().toLowerCase(),
-      role
+      role,
+      sellerType: role === 'seller' ? sellerType : undefined
     });
 
     navigate(role === 'seller' ? '/seller/dashboard' : '/');
@@ -92,6 +95,22 @@ const SignUp = () => {
               <p>Open your storefront and receive quote requests</p>
             </div>
           </div>
+
+          {role === 'seller' && (
+            <>
+              <label>Seller Type</label>
+              <select
+                value={sellerType}
+                onChange={(e) => setSellerType(e.target.value as SellerSegment)}
+              >
+                <option value="retailer">Retailer</option>
+                <option value="manufacturer-distributor">Manufacturer / Distributor</option>
+                <option value="wholesale-farmer">Wholesale Farmer</option>
+                <option value="professional-services">Professional Service Provider</option>
+                <option value="institution">Institution</option>
+              </select>
+            </>
+          )}
 
           <button type="submit" className="create-btn">
             Create Marketplace Account

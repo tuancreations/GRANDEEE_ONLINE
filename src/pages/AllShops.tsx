@@ -31,6 +31,11 @@ const AllShops = () => {
 
                 <p className="shop-card-description">{shop.description}</p>
 
+                <p className="shop-card-description">
+                  Segment: {shop.segment.replace('-', ' ')}
+                  {shop.tradeMode === 'request' && ' | Order by request'}
+                </p>
+
                 <div className="shop-card-location">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
@@ -56,7 +61,7 @@ const AllShops = () => {
                 </div>
 
                 <button className="contact-btn">
-                  Request Quote from Seller
+                  {shop.tradeMode === 'request' ? 'Send Order Request' : 'Request Quote from Seller'}
                 </button>
               </div>
             </Link>

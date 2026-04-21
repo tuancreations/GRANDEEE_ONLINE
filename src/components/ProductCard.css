@@ -66,6 +66,29 @@
   color: #8f8579;
 }
 
+.product-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.product-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: capitalize;
+  color: #5b4838;
+  background: #f3e9df;
+}
+
+.product-tag.request {
+  color: #9b4018;
+  background: #ffe8db;
+}
+
 .product-price {
   margin: 0.4rem 0;
 }
@@ -119,4 +142,25 @@
 .view-shop-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 14px 24px rgba(171, 67, 27, 0.3);
+}
+
+.product-quick-actions {
+  margin-top: 0.45rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem;
+}
+
+.product-quick-actions button {
+  border-radius: 9px;
+  padding: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background: #f7eee7;
+  color: #5c4a3b;
+}
+
+.product-quick-actions button.active {
+  background: #ffe7d8;
+  color: #9e4319;
 }

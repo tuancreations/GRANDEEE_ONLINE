@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useApp } from "../contexts/AppContext";
+import type { SellerSegment } from "../data/mockData";
 import "./SignIn.css";
 
 const SignIn = () => {
@@ -8,6 +9,7 @@ const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState<'buyer' | 'seller'>('buyer');
+  const [sellerType, setSellerType] = useState<SellerSegment>('retailer');
   const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
@@ -21,7 +23,11 @@ const SignIn = () => {
     }
 
     // Update user first
-    setUser({ email, role });
+    setUser({
+      email,
+      role,
+      sellerType: role === 'seller' ? sellerType : undefined
+    });
 
     // Trigger alert and navigate after short delay
     setTimeout(() => {
@@ -55,6 +61,22 @@ const SignIn = () => {
               <p>Manage listings and respond to quote requests</p>
             </div>
           </div>
+
+          {role === 'seller' && (
+            <>
+              <label>Seller Type</label>
+              <select
+                value={sellerType}
+                onChange={(e) => setSellerType(e.target.value as SellerSegment)}
+              >
+                <option value="retailer">Retailer</option>
+                <option value="manufacturer-distributor">Manufacturer / Distributor</option>
+                <option value="wholesale-farmer">Wholesale Farmer</option>
+                <option value="professional-services">Professional Service Provider</option>
+                <option value="institution">Institution</option>
+              </select>
+            </>
+          )}
 
           <label>Email Address</label>
           <input

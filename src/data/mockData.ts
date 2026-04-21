@@ -3,6 +3,15 @@ export type Coordinates = {
   lng: number;
 };
 
+export type SellerSegment =
+  | 'retailer'
+  | 'manufacturer-distributor'
+  | 'wholesale-farmer'
+  | 'professional-services'
+  | 'institution';
+
+export type TradeMode = 'instant' | 'request';
+
 export type Shop = {
   id: number;
   name: string;
@@ -17,6 +26,10 @@ export type Shop = {
   verified: boolean;
   online: boolean;
   avatar: string;
+  segment: SellerSegment;
+  tradeMode: TradeMode;
+  minimumOrderNote?: string;
+  deliveryScheduleNote?: string;
 };
 
 export type Product = {
@@ -28,6 +41,7 @@ export type Product = {
   image: string;
   shopId: number;
   inStock: boolean;
+  minimumOrderQty?: number;
 };
 
 export const mockShops: Shop[] = [
@@ -44,7 +58,9 @@ export const mockShops: Shop[] = [
     },
     verified: true,
     online: true,
-    avatar: "https://images.pexels.com/photos/1714208/pexels-photo-1714208.jpeg?auto=compress&cs=tinysrgb&w=100"
+    avatar: "https://images.pexels.com/photos/1714208/pexels-photo-1714208.jpeg?auto=compress&cs=tinysrgb&w=100",
+    segment: 'retailer',
+    tradeMode: 'instant'
   },
   {
     id: 2,
@@ -59,7 +75,9 @@ export const mockShops: Shop[] = [
     },
     verified: true,
     online: true,
-    avatar: "https://images.pexels.com/photos/1884584/pexels-photo-1884584.jpeg?auto=compress&cs=tinysrgb&w=100"
+    avatar: "https://images.pexels.com/photos/1884584/pexels-photo-1884584.jpeg?auto=compress&cs=tinysrgb&w=100",
+    segment: 'retailer',
+    tradeMode: 'instant'
   },
   {
     id: 3,
@@ -74,7 +92,9 @@ export const mockShops: Shop[] = [
     },
     verified: true,
     online: false,
-    avatar: "https://images.pexels.com/photos/1090638/pexels-photo-1090638.jpeg?auto=compress&cs=tinysrgb&w=100"
+    avatar: "https://images.pexels.com/photos/1090638/pexels-photo-1090638.jpeg?auto=compress&cs=tinysrgb&w=100",
+    segment: 'retailer',
+    tradeMode: 'instant'
   },
   {
     id: 4,
@@ -89,7 +109,9 @@ export const mockShops: Shop[] = [
     },
     verified: true,
     online: true,
-    avatar: "https://images.pexels.com/photos/2113855/pexels-photo-2113855.jpeg?auto=compress&cs=tinysrgb&w=100"
+    avatar: "https://images.pexels.com/photos/2113855/pexels-photo-2113855.jpeg?auto=compress&cs=tinysrgb&w=100",
+    segment: 'retailer',
+    tradeMode: 'instant'
   },
   {
     id: 5,
@@ -104,7 +126,83 @@ export const mockShops: Shop[] = [
     },
     verified: true,
     online: true,
-    avatar: "https://images.pexels.com/photos/1552252/pexels-photo-1552252.jpeg?auto=compress&cs=tinysrgb&w=100"
+    avatar: "https://images.pexels.com/photos/1552252/pexels-photo-1552252.jpeg?auto=compress&cs=tinysrgb&w=100",
+    segment: 'retailer',
+    tradeMode: 'instant'
+  },
+  {
+    id: 6,
+    name: "Nile Agro Processors",
+    description: "Manufacturer and distributor of dried fruits and grain products",
+    rating: 4.7,
+    reviews: 540,
+    location: {
+      address: "Plot 22 Industrial Area, Jinja, Uganda",
+      coordinates: { lat: 0.4246, lng: 33.2042 },
+      country: "Uganda"
+    },
+    verified: true,
+    online: true,
+    avatar: "https://images.pexels.com/photos/2284166/pexels-photo-2284166.jpeg?auto=compress&cs=tinysrgb&w=100",
+    segment: 'manufacturer-distributor',
+    tradeMode: 'request',
+    minimumOrderNote: 'Minimum order starts at pallet volume.',
+    deliveryScheduleNote: 'Delivery date confirmed after production planning.'
+  },
+  {
+    id: 7,
+    name: "Bugisu Bulk Farmers Union",
+    description: "Wholesale fresh produce and export-grade coffee suppliers",
+    rating: 4.8,
+    reviews: 690,
+    location: {
+      address: "Mbale Main Market, Mbale, Uganda",
+      coordinates: { lat: 1.0821, lng: 34.175 },
+      country: "Uganda"
+    },
+    verified: true,
+    online: true,
+    avatar: "https://images.pexels.com/photos/2933243/pexels-photo-2933243.jpeg?auto=compress&cs=tinysrgb&w=100",
+    segment: 'wholesale-farmer',
+    tradeMode: 'request',
+    minimumOrderNote: 'Bulk requests only. Small retail orders are not accepted.',
+    deliveryScheduleNote: 'Dispatch depends on harvest and sorting schedule.'
+  },
+  {
+    id: 8,
+    name: "LexBridge Legal Advisory",
+    description: "Business legal support, contracts, and trade compliance services",
+    rating: 4.9,
+    reviews: 220,
+    location: {
+      address: "Nakasero Business District, Kampala, Uganda",
+      coordinates: { lat: 0.3163, lng: 32.5822 },
+      country: "Uganda"
+    },
+    verified: true,
+    online: true,
+    avatar: "https://images.pexels.com/photos/4427430/pexels-photo-4427430.jpeg?auto=compress&cs=tinysrgb&w=100",
+    segment: 'professional-services',
+    tradeMode: 'request',
+    deliveryScheduleNote: 'Service appointment is confirmed after request review.'
+  },
+  {
+    id: 9,
+    name: "St. Kizito Medical Centre",
+    description: "Institutional healthcare supplies and scheduled medical services",
+    rating: 4.6,
+    reviews: 180,
+    location: {
+      address: "Ntinda, Kampala, Uganda",
+      coordinates: { lat: 0.3533, lng: 32.6139 },
+      country: "Uganda"
+    },
+    verified: true,
+    online: true,
+    avatar: "https://images.pexels.com/photos/263402/pexels-photo-263402.jpeg?auto=compress&cs=tinysrgb&w=100",
+    segment: 'institution',
+    tradeMode: 'request',
+    deliveryScheduleNote: 'Institutional orders are scheduled by procurement team.'
   }
 ];
 
@@ -188,6 +286,49 @@ export const mockProducts: Product[] = [
     image: "https://images.pexels.com/photos/4498606/pexels-photo-4498606.jpeg?auto=compress&cs=tinysrgb&w=300",
     shopId: 5,
     inStock: true
+  },
+  {
+    id: 9,
+    name: "Sun-Dried Pineapple Bulk Carton",
+    category: "Food & Beverages",
+    price: 4200,
+    currency: "USD",
+    image: "https://images.pexels.com/photos/5945761/pexels-photo-5945761.jpeg?auto=compress&cs=tinysrgb&w=300",
+    shopId: 6,
+    inStock: true,
+    minimumOrderQty: 300
+  },
+  {
+    id: 10,
+    name: "Green Coffee Beans (Export Grade)",
+    category: "Food & Beverages",
+    price: 26500,
+    currency: "USD",
+    image: "https://images.pexels.com/photos/606540/pexels-photo-606540.jpeg?auto=compress&cs=tinysrgb&w=300",
+    shopId: 7,
+    inStock: true,
+    minimumOrderQty: 500
+  },
+  {
+    id: 11,
+    name: "Cross-Border Trade Legal Package",
+    category: "Professional Services",
+    price: 950,
+    currency: "USD",
+    image: "https://images.pexels.com/photos/5668473/pexels-photo-5668473.jpeg?auto=compress&cs=tinysrgb&w=300",
+    shopId: 8,
+    inStock: true
+  },
+  {
+    id: 12,
+    name: "Institutional Lab Supply Contract",
+    category: "Institutions",
+    price: 12000,
+    currency: "USD",
+    image: "https://images.pexels.com/photos/356040/pexels-photo-356040.jpeg?auto=compress&cs=tinysrgb&w=300",
+    shopId: 9,
+    inStock: true,
+    minimumOrderQty: 50
   }
 ];
 
@@ -200,5 +341,7 @@ export const categories: string[] = [
   "Sports",
   "Books",
   "Toys",
-  "Food & Beverages"
+  "Food & Beverages",
+  "Professional Services",
+  "Institutions"
 ];

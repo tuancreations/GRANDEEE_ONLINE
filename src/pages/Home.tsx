@@ -6,12 +6,41 @@ import ProductCard from '../components/ProductCard';
 import './Home.css';
 
 const Home = () => {
-  const { user, searchQuery, selectedCategory, setSelectedCategory } = useApp();
+  const {
+    user,
+    searchQuery,
+    selectedCategory,
+    setSelectedCategory,
+    buyerMarketPartition
+  } = useApp();
   const [filteredProducts, setFilteredProducts] = useState(mockProducts);
   const [activeView, setActiveView] = useState<'buyer' | 'seller'>(user?.role ?? 'buyer');
 
   useEffect(() => {
     let results = mockProducts;
+
+    results = results.filter((product) => {
+      const shop = mockShops.find((item) => item.id === product.shopId);
+      if (!shop) return false;
+
+      if (buyerMarketPartition === 'retail') {
+        return shop.segment === 'retailer';
+      }
+
+      if (buyerMarketPartition === 'manufacturer-distributor') {
+        return shop.segment === 'manufacturer-distributor';
+      }
+
+      if (buyerMarketPartition === 'wholesale-farmer') {
+        return shop.segment === 'wholesale-farmer';
+      }
+
+      if (buyerMarketPartition === 'professional-services') {
+        return shop.segment === 'professional-services';
+      }
+
+      return shop.segment === 'institution';
+    });
 
     if (selectedCategory !== 'All Categories') {
       results = results.filter(p => p.category === selectedCategory);
@@ -25,7 +54,7 @@ const Home = () => {
     }
 
     setFilteredProducts(results);
-  }, [searchQuery, selectedCategory]);
+  }, [searchQuery, selectedCategory, buyerMarketPartition]);
 
   useEffect(() => {
     setActiveView(user?.role ?? 'buyer');
@@ -40,6 +69,13 @@ const Home = () => {
   const primaryActionLabel = activeView === 'buyer' ? 'Find sellers' : 'Manage listings';
   const secondaryAction = activeView === 'buyer' ? '/seller/dashboard' : '/shops';
   const secondaryActionLabel = activeView === 'buyer' ? 'Open seller tools' : 'Switch to buyer view';
+  const quickLinks = [
+    { to: '/wishlist', label: 'Shopping List', hint: 'Saved products and service requests' },
+    { to: '/cart', label: 'Cart', hint: 'Items ready for negotiation' },
+    { to: '/orders', label: 'Manage Orders', hint: 'Track request and delivery status' },
+    { to: '/coupons', label: 'Coupons', hint: 'Find active discounts' },
+    { to: '/tips', label: 'Trading Tips', hint: 'Quick buyer guidance' }
+  ];
   const quickFlow =
     activeView === 'buyer'
       ? ['Search products', 'Negotiate in chat/voice/video', 'Choose delivery or pickup']
@@ -52,7 +88,7 @@ const Home = () => {
           <p className="hero-kicker">Marketplace dashboard</p>
           <h1 className="hero-title">Trade from one simple dashboard.</h1>
           <p className="hero-subtitle">
-            Find products, talk to sellers, and complete delivery without leaving the app.
+            Find what you need, send a request, and track fulfillment from one place.
           </p>
           <div className="dashboard-mode-switch" role="tablist" aria-label="Marketplace dashboard mode">
             <button
@@ -140,6 +176,17 @@ const Home = () => {
         </div>
       </section>
 
+      <section className="quick-links-section">
+        <div className="quick-links-grid">
+          {quickLinks.map((item) => (
+            <Link key={item.to} to={item.to} className="quick-link-card">
+              <h3>{item.label}</h3>
+              <p>{item.hint}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
+
       <section className="dashboard-rail">
         <article className="rail-card">
           <p className="rail-label">1. Search</p>
@@ -194,6 +241,11 @@ const Home = () => {
         <h2 className="section-title">
           {searchQuery ? `Search Results for "${searchQuery}"` : 'Marketplace Listings'}
         </h2>
+        <p className="partition-note">
+          {buyerMarketPartition === 'manufacturer-distributor' || buyerMarketPartition === 'wholesale-farmer'
+            ? 'This segment uses request-order flow. Seller confirms delivery schedule after reviewing your order request.'
+            : 'Select listings and negotiate directly with verified sellers.'}
+        </p>
 
         {filteredProducts.length === 0 ? (
           <div className="no-results">

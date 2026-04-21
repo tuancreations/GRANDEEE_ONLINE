@@ -109,6 +109,8 @@ const SellerDashboard = () => {
     [sellerListings]
   );
 
+  const sellerTypeLabel = user.sellerType ? user.sellerType.replace('-', ' ') : 'retailer';
+
   const validateAndBuildPayload = () => {
     const price = Number(formData.price);
     const stock = Number(formData.stock);
@@ -231,6 +233,7 @@ const SellerDashboard = () => {
             <p>
               Keep it simple: add your product, answer buyer requests, and hand over delivery.
             </p>
+            <p>Business type: {sellerTypeLabel}</p>
           </div>
           <div className="seller-hero-highlight">
             <span>Today</span>
