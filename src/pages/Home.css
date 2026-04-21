@@ -10,9 +10,9 @@
   text-align: center;
   color: #f8f8f8;
   background:
-    radial-gradient(circle at 12% 12%, rgba(255, 202, 172, 0.24), transparent 30%),
-    radial-gradient(circle at 87% 73%, rgba(61, 197, 176, 0.22), transparent 32%),
-    linear-gradient(125deg, #23201b 0%, #173a35 45%, #0f8a7a 100%);
+    radial-gradient(circle at 12% 12%, rgba(255, 133, 77, 0.24), transparent 30%),
+    radial-gradient(circle at 87% 73%, rgba(255, 106, 33, 0.2), transparent 32%),
+    linear-gradient(125deg, #101010 0%, #1c1c1c 45%, #ff6a21 100%);
   box-shadow: var(--shadow-lg);
   animation: reveal-up 0.5s ease;
 }
@@ -80,7 +80,7 @@
 
 .mode-chip.active {
   background: #ffffff;
-  color: #0f5f53;
+  color: var(--brand-deep);
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.16);
 }
 
@@ -132,7 +132,7 @@
   align-items: center;
   justify-content: center;
   background: #fff;
-  color: #0f5f53;
+  color: var(--brand-deep);
   font-size: 0.78rem;
   font-weight: 800;
 }
@@ -156,7 +156,7 @@
   border-radius: 999px;
   padding: 0.8rem 1.3rem;
   font-weight: 800;
-  color: #0f5f53;
+  color: var(--brand-deep);
   background: #ffffff;
   box-shadow: 0 10px 22px rgba(0, 0, 0, 0.18);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -340,8 +340,8 @@
   align-items: center;
   padding: 0.28rem 0.6rem;
   border-radius: 999px;
-  background: rgba(15, 138, 122, 0.12);
-  color: #0f705f;
+  background: rgba(255, 106, 33, 0.15);
+  color: var(--brand-deep);
   font-size: 0.74rem;
   font-weight: 800;
   text-transform: uppercase;

@@ -1,17 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@500;600;700;800&display=swap');
 
 :root {
-  --bg-canvas: #f7efe4;
-  --bg-soft: #fffaf4;
+  --bg-canvas: #f2f2f2;
+  --bg-soft: #fafafa;
   --surface: #ffffff;
-  --surface-tint: #f7f0e8;
-  --text-strong: #1e1c19;
-  --text-muted: #655f57;
-  --brand: #d45b2b;
-  --brand-deep: #ab431b;
-  --accent: #0f8a7a;
-  --line: #e8dac7;
-  --ring: rgba(15, 138, 122, 0.35);
+  --surface-tint: #fff5ee;
+  --text-strong: #1a1a1a;
+  --text-muted: #5b5b5b;
+  --brand: #ff6a21;
+  --brand-deep: #e75716;
+  --accent: #151515;
+  --line: #ebddd2;
+  --ring: rgba(255, 106, 33, 0.35);
   --radius-lg: 18px;
   --radius-md: 12px;
   --shadow-sm: 0 8px 20px rgba(36, 24, 16, 0.08);
@@ -32,8 +32,8 @@ body {
   margin: 0;
   color: var(--text-strong);
   background:
-    radial-gradient(circle at 10% 10%, rgba(212, 91, 43, 0.09), transparent 30%),
-    radial-gradient(circle at 90% 20%, rgba(15, 138, 122, 0.08), transparent 28%),
+    radial-gradient(circle at 10% 10%, rgba(255, 106, 33, 0.1), transparent 32%),
+    radial-gradient(circle at 90% 20%, rgba(26, 26, 26, 0.08), transparent 28%),
     var(--bg-canvas);
   font-family: 'Manrope', 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;

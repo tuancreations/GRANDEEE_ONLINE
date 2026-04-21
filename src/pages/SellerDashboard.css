@@ -10,7 +10,9 @@
 }
 
 .seller-hero {
-  background: linear-gradient(125deg, #23201b 0%, #173a35 55%, #0f8a7a 100%);
+  background:
+    radial-gradient(circle at 10% 20%, rgba(255, 130, 67, 0.2), transparent 36%),
+    linear-gradient(125deg, #0f0f0f 0%, #1b1b1b 55%, #ff6a21 100%);
   border-radius: 24px;
   color: #f5faf9;
   padding: 1.5rem;
@@ -161,8 +163,8 @@
 .request-card-top span {
   border-radius: 999px;
   padding: 0.3rem 0.55rem;
-  background: #edf8f4;
-  color: #0f725f;
+  background: #fff0e8;
+  color: var(--brand-deep);
   font-size: 0.76rem;
   font-weight: 800;
   white-space: nowrap;
@@ -216,8 +218,8 @@
 }
 
 .fulfillment-step.active {
-  background: linear-gradient(180deg, #eefaf6, #ffffff);
-  border-color: #cfeee4;
+  background: linear-gradient(180deg, #fff3eb, #ffffff);
+  border-color: #ffd8c3;
 }
 
 .fulfillment-step span {
