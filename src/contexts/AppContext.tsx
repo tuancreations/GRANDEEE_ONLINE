@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import type { Shop } from '../data/mockData';
 
 type CommunicationType = 'chat' | 'voice' | 'video';
@@ -8,6 +8,29 @@ type User = {
   name?: string;
   email: string;
   role: UserRole;
+};
+
+const USER_STORAGE_KEY = 'grandee_user';
+
+const getStoredUser = (): User | null => {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
+  const raw = window.localStorage.getItem(USER_STORAGE_KEY);
+  if (!raw) {
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(raw) as User;
+    if (!parsed?.email || (parsed.role !== 'buyer' && parsed.role !== 'seller')) {
+      return null;
+    }
+    return parsed;
+  } catch {
+    return null;
+  }
 };
 
 export type SellerListing = {
@@ -23,6 +46,8 @@ export type SellerListing = {
   contactName: string;
   contactPhone: string;
   contactEmail: string;
+  fulfillmentMode: 'grandee' | 'seller';
+  pickupAvailable: boolean;
   createdAt: number;
   isActive: boolean;
 };
@@ -72,7 +97,7 @@ type AppProviderProps = {
 };
 
 export const AppProvider = ({ children }: AppProviderProps) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(getStoredUser);
   const [sellerListings, setSellerListings] = useState<SellerListing[]>([
     {
       id: 1,
@@ -87,6 +112,8 @@ export const AppProvider = ({ children }: AppProviderProps) => {
       contactName: 'Sales Desk',
       contactPhone: '+256 700 000001',
       contactEmail: 'sales@grandeeonline.com',
+      fulfillmentMode: 'grandee',
+      pickupAvailable: true,
       createdAt: Date.now() - 86400000,
       isActive: true
     },
@@ -103,6 +130,8 @@ export const AppProvider = ({ children }: AppProviderProps) => {
       contactName: 'Wholesale Team',
       contactPhone: '+256 700 000002',
       contactEmail: 'wholesale@grandeeonline.com',
+      fulfillmentMode: 'seller',
+      pickupAvailable: false,
       createdAt: Date.now() - 172800000,
       isActive: true
     }
@@ -111,6 +140,18 @@ export const AppProvider = ({ children }: AppProviderProps) => {
   const [sellerLocation, setSellerLocation] = useState<SellerLocation | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All Categories');
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    if (user) {
+      window.localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
+    } else {
+      window.localStorage.removeItem(USER_STORAGE_KEY);
+    }
+  }, [user]);
 
   const startCommunication = (shop: Shop, type: CommunicationType) => {
     setActiveCommunication({ shop, type, startTime: Date.now() });

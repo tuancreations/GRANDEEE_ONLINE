@@ -128,12 +128,98 @@
 }
 
 .location-section,
+.order-completion-section,
 .products-section {
   background: var(--surface);
   border-radius: var(--radius-lg);
   border: 1px solid var(--line);
   padding: 1.2rem;
   box-shadow: var(--shadow-sm);
+}
+
+.order-completion-section h2 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: var(--text-strong);
+}
+
+.completion-subtitle {
+  margin-top: 0.4rem;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+
+.completion-grid {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.completion-card {
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--surface-tint);
+  padding: 0.85rem;
+}
+
+.completion-label {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.52rem;
+  border-radius: 999px;
+  background: rgba(15, 138, 122, 0.12);
+  color: #0f705f;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.completion-card h3 {
+  margin-top: 0.55rem;
+  font-size: 0.98rem;
+  color: var(--text-strong);
+}
+
+.completion-options {
+  margin-top: 0.65rem;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.completion-option {
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: #4f473e;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 0.55rem 0.65rem;
+  text-align: left;
+}
+
+.completion-option.active {
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--brand), var(--brand-deep));
+  color: #fff;
+}
+
+.summary-card p {
+  margin-top: 0.55rem;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+}
+
+.completion-cta {
+  margin-top: 0.75rem;
+  width: 100%;
+  border-radius: 10px;
+  padding: 0.62rem 0.75rem;
+  background: linear-gradient(135deg, var(--brand), var(--brand-deep));
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 800;
 }
 
 .section-header-with-action {
@@ -327,6 +413,10 @@
 
 @media (max-width: 1024px) {
   .shop-content {
+    grid-template-columns: 1fr;
+  }
+
+  .completion-grid {
     grid-template-columns: 1fr;
   }
 

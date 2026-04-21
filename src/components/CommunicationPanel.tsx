@@ -1,24 +1,37 @@
 import { useState, useEffect, useRef } from 'react';
 import { useApp } from '../contexts/AppContext';
+import type { Shop } from '../data/mockData';
 import './CommunicationPanel.css';
 
-const CommunicationPanel = ({ shop }) => {
+type Message = {
+  id: number;
+  sender: 'seller' | 'customer';
+  text: string;
+  type?: 'file';
+  time: Date;
+};
+
+type CommunicationPanelProps = {
+  shop: Shop;
+};
+
+const CommunicationPanel = ({ shop }: CommunicationPanelProps) => {
   const { activeCommunication, startCommunication, endCommunication, updateSellerLocation } = useApp();
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState('');
-  const [activeTab, setActiveTab] = useState('chat');
   const [callDuration, setCallDuration] = useState(0);
-  const messagesEndRef = useRef(null);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const isActiveForShop = activeCommunication?.shop.id === shop.id;
 
   useEffect(() => {
-    if (activeCommunication && (activeCommunication.type === 'voice' || activeCommunication.type === 'video')) {
+    if (isActiveForShop && activeCommunication && (activeCommunication.type === 'voice' || activeCommunication.type === 'video')) {
       const interval = setInterval(() => {
         setCallDuration(Math.floor((Date.now() - activeCommunication.startTime) / 1000));
         updateSellerLocation();
       }, 1000);
       return () => clearInterval(interval);
     }
-  }, [activeCommunication, updateSellerLocation]);
+  }, [activeCommunication, isActiveForShop, updateSellerLocation]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -26,7 +39,6 @@ const CommunicationPanel = ({ shop }) => {
 
   const handleStartChat = () => {
     startCommunication(shop, 'chat');
-    setActiveTab('chat');
     setTimeout(() => {
       setMessages([
         { id: 1, sender: 'seller', text: `Hello! Thanks for contacting ${shop.name}. Share your quantity, destination, and timeline so I can send a quote.`, time: new Date() }
@@ -36,26 +48,23 @@ const CommunicationPanel = ({ shop }) => {
 
   const handleStartVoice = () => {
     startCommunication(shop, 'voice');
-    setActiveTab('voice');
   };
 
   const handleStartVideo = () => {
     startCommunication(shop, 'video');
-    setActiveTab('video');
   };
 
   const handleEndCommunication = () => {
     endCommunication();
     setMessages([]);
     setCallDuration(0);
-    setActiveTab('chat');
   };
 
-  const handleSendMessage = (e) => {
+  const handleSendMessage = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!inputMessage.trim()) return;
 
-    const newMessage = {
+    const newMessage: Message = {
       id: messages.length + 1,
       sender: 'customer',
       text: inputMessage,
@@ -73,7 +82,7 @@ const CommunicationPanel = ({ shop }) => {
         "I can reserve stock once you confirm your order details.",
         "Share your delivery location and I will calculate shipping."
       ];
-      const reply = {
+      const reply: Message = {
         id: messages.length + 2,
         sender: 'seller',
         text: replies[Math.floor(Math.random() * replies.length)],
@@ -83,8 +92,12 @@ const CommunicationPanel = ({ shop }) => {
     }, 1500);
   };
 
+  const applyPrompt = (prompt: string) => {
+    setInputMessage(prompt);
+  };
+
   const handleFileUpload = () => {
-    const fileMessage = {
+    const fileMessage: Message = {
       id: messages.length + 1,
       sender: 'customer',
       text: '📎 Document shared',
@@ -94,7 +107,7 @@ const CommunicationPanel = ({ shop }) => {
     setMessages([...messages, fileMessage]);
   };
 
-  const formatDuration = (seconds) => {
+  const formatDuration = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
@@ -116,7 +129,7 @@ const CommunicationPanel = ({ shop }) => {
     );
   }
 
-  if (!activeCommunication) {
+  if (!isActiveForShop) {
     return (
       <div className="communication-panel">
         <div className="panel-header">
@@ -189,6 +202,12 @@ const CommunicationPanel = ({ shop }) => {
 
       {activeCommunication.type === 'chat' && (
         <div className="chat-container">
+          <div className="quick-prompts">
+            <button type="button" onClick={() => applyPrompt('What is your best price for 100 units?')}>Best price</button>
+            <button type="button" onClick={() => applyPrompt('Can we use Grandee-managed logistics for this order?')}>Grandee logistics</button>
+            <button type="button" onClick={() => applyPrompt('Is Auto-Guide pickup available today?')}>Pickup option</button>
+          </div>
+
           <div className="messages-area">
             {messages.map(msg => (
               <div key={msg.id} className={`message ${msg.sender}`}>
@@ -260,6 +279,7 @@ const CommunicationPanel = ({ shop }) => {
               </svg>
               Live location tracking active
             </div>
+            <div className="call-checklist">Confirm quantity, fulfillment owner, and pickup or delivery before ending call.</div>
           </div>
 
           <div className="call-controls">

@@ -26,7 +26,7 @@ const SignIn = () => {
     // Trigger alert and navigate after short delay
     setTimeout(() => {
       alert("Login successful!");
-      navigate(role === 'seller' ? "/seller/dashboard" : "/home");
+      navigate(role === 'seller' ? "/seller/dashboard" : "/");
     }, 50);
   };
 

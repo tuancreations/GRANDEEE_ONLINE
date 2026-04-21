@@ -1,9 +1,18 @@
 import { Link } from 'react-router-dom';
 import { mockShops } from '../data/mockData';
+import type { Product } from '../data/mockData';
 import './ProductCard.css';
 
-const ProductCard = ({ product }) => {
+type ProductCardProps = {
+  product: Product;
+};
+
+const ProductCard = ({ product }: ProductCardProps) => {
   const shop = mockShops.find(s => s.id === product.shopId);
+
+  if (!shop) {
+    return null;
+  }
 
   return (
     <div className="product-card">

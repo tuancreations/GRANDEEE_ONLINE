@@ -2,7 +2,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AppProvider } from "./contexts/AppContext";
 
 import MainLayout from "./layouts/MainLayout";
-import Landing from "./pages/Landing";
 import Home from "./pages/Home";
 import ShopDetail from "./pages/ShopDetail";
 import AllShops from "./pages/AllShops";
@@ -18,20 +17,18 @@ function App() {
       <Router>
         <Routes>
 
-          {/* Landing Page (No Header) */}
-          <Route path="/" element={<Landing />} />
+          {/* Marketplace shell */}
+          <Route element={<MainLayout />}>
+            <Route index element={<Home />} />
+            <Route path="home" element={<Home />} />
+            <Route path="shops" element={<AllShops />} />
+            <Route path="shop/:id" element={<ShopDetail />} />
+            <Route path="seller/dashboard" element={<SellerDashboard />} />
+          </Route>
 
           {/* Auth Pages (No Header) */}
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
-
-          {/* Marketplace Pages (With Header, protected by MainLayout) */}
-          <Route element={<MainLayout />}>
-            <Route path="/home" element={<Home />} />
-            <Route path="/shops" element={<AllShops />} />
-            <Route path="/shop/:id" element={<ShopDetail />} />
-            <Route path="/seller/dashboard" element={<SellerDashboard />} />
-          </Route>
 
         </Routes>
       </Router>

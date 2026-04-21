@@ -26,7 +26,7 @@ const SignUp = () => {
       role
     });
 
-    navigate(role === 'seller' ? '/seller/dashboard' : '/home');
+    navigate(role === 'seller' ? '/seller/dashboard' : '/');
   };
 
   return (

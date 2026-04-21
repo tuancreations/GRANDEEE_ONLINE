@@ -15,6 +15,8 @@ type ListingFormState = {
   contactName: string;
   contactPhone: string;
   contactEmail: string;
+  fulfillmentMode: 'grandee' | 'seller';
+  pickupAvailable: boolean;
 };
 
 const initialFormState: ListingFormState = {
@@ -28,11 +30,58 @@ const initialFormState: ListingFormState = {
   location: '',
   contactName: '',
   contactPhone: '',
-  contactEmail: ''
+  contactEmail: '',
+  fulfillmentMode: 'grandee',
+  pickupAvailable: true
 };
 
 const fallbackImageUrl =
   'https://images.pexels.com/photos/6214378/pexels-photo-6214378.jpeg?auto=compress&cs=tinysrgb&w=300';
+
+const incomingRequests = [
+  {
+    buyer: 'Amina K.',
+    location: 'London, UK',
+    product: 'Fresh mango crates',
+    message: '120 crates, voice confirmation, simple repacking.',
+    budget: 'USD 6,900',
+    status: 'Awaiting seller reply'
+  },
+  {
+    buyer: 'Hotel Chain Procurement',
+    location: 'Kampala, Uganda',
+    product: 'Sun-dried pineapple packs',
+    message: 'Weekly supply with warehouse pickup.',
+    budget: 'USD 4,200',
+    status: 'Negotiating logistics'
+  },
+  {
+    buyer: 'Stephen O.',
+    location: 'Kampala, Uganda',
+    product: 'Bulk avocado stock',
+    message: 'Hold stock for 48 hours while price is confirmed.',
+    budget: 'UGX 2,400,000',
+    status: 'Warehouse hold requested'
+  }
+];
+
+const fulfillmentStages = [
+  {
+    title: '1. Orders captured',
+    description: 'Buyer RFQs are sorted by price, urgency, and delivery destination.',
+    active: true
+  },
+  {
+    title: '2. Warehouse prep',
+    description: 'Goods are picked, sorted, and packaged at the nearest Grandee hub.',
+    active: true
+  },
+  {
+    title: '3. Dispatch scheduled',
+    description: 'Local riders or international partners handle the final delivery leg.',
+    active: false
+  }
+];
 
 const SellerDashboard = () => {
   const { user, sellerListings, addSellerListing, updateSellerListing, toggleListingStatus } = useApp();
@@ -100,7 +149,9 @@ const SellerDashboard = () => {
       location: formData.location.trim(),
       contactName: formData.contactName.trim(),
       contactPhone: formData.contactPhone.trim(),
-      contactEmail: formData.contactEmail.trim()
+      contactEmail: formData.contactEmail.trim(),
+      fulfillmentMode: formData.fulfillmentMode,
+      pickupAvailable: formData.pickupAvailable
     };
   };
 
@@ -164,7 +215,9 @@ const SellerDashboard = () => {
       location: listing.location,
       contactName: listing.contactName,
       contactPhone: listing.contactPhone,
-      contactEmail: listing.contactEmail
+      contactEmail: listing.contactEmail,
+      fulfillmentMode: listing.fulfillmentMode,
+      pickupAvailable: listing.pickupAvailable
     });
   };
 
@@ -172,13 +225,17 @@ const SellerDashboard = () => {
     <div className="seller-dashboard-page">
       <div className="seller-dashboard-container">
         <section className="seller-hero">
-          <div>
-            <p className="seller-kicker">Seller Onboarding</p>
-            <h1>Welcome, {user?.name || user?.email}</h1>
+          <div className="seller-hero-copy">
+            <p className="seller-kicker">Seller command center</p>
+            <h1>Manage sales, stock, and delivery in one place, {user?.name || user?.email}</h1>
             <p>
-              Complete your seller setup by publishing listings with clear pricing,
-              available stock, and delivery details buyers can trust.
+              Keep it simple: add your product, answer buyer requests, and hand over delivery.
             </p>
+          </div>
+          <div className="seller-hero-highlight">
+            <span>Today</span>
+            <strong>{incomingRequests.length} buyer requests</strong>
+            <p>{activeCount} live listings and {totalStock} units ready to trade.</p>
           </div>
         </section>
 
@@ -192,8 +249,59 @@ const SellerDashboard = () => {
             <p>{activeCount}</p>
           </article>
           <article className="metric-card">
-            <h3>Ready-to-Sell Units</h3>
+            <h3>Incoming RFQs</h3>
+            <p>{incomingRequests.length}</p>
+          </article>
+          <article className="metric-card">
+            <h3>Ready Units</h3>
             <p>{totalStock}</p>
+          </article>
+        </section>
+
+        <section className="seller-ops-grid">
+          <article className="seller-card ops-card">
+            <div className="section-heading-row">
+              <h2>Buyer Requests</h2>
+              <span>Reply fast</span>
+            </div>
+            <div className="request-list">
+              {incomingRequests.map((request) => (
+                <article key={`${request.buyer}-${request.product}`} className="request-card">
+                  <div className="request-card-top">
+                    <div>
+                      <h3>{request.buyer}</h3>
+                      <p>{request.location}</p>
+                    </div>
+                    <span>{request.budget}</span>
+                  </div>
+                  <strong>{request.product}</strong>
+                  <p>{request.message}</p>
+                  <div className="request-card-footer">
+                    <span>{request.status}</span>
+                    <button type="button" className="request-action">Reply</button>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </article>
+
+          <article className="seller-card ops-card">
+            <div className="section-heading-row">
+              <h2>Simple Fulfillment</h2>
+              <span>Warehouse to buyer</span>
+            </div>
+            <div className="fulfillment-track">
+              {fulfillmentStages.map((stage) => (
+                <article key={stage.title} className={`fulfillment-step ${stage.active ? 'active' : ''}`}>
+                  <span>{stage.title}</span>
+                  <p>{stage.description}</p>
+                </article>
+              ))}
+            </div>
+            <div className="warehouse-note">
+              <strong>Nearest hub</strong>
+              <p>Kampala Central warehouse handles sorting, repacking, and dispatch.</p>
+            </div>
           </article>
         </section>
 
@@ -326,6 +434,40 @@ const SellerDashboard = () => {
                 required
               />
 
+              <div className="seller-form-row">
+                <div>
+                  <label>Fulfillment Method</label>
+                  <select
+                    value={formData.fulfillmentMode}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        fulfillmentMode: e.target.value as 'grandee' | 'seller'
+                      }))
+                    }
+                  >
+                    <option value="grandee">Grandee-managed logistics</option>
+                    <option value="seller">Seller-managed delivery</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label>Auto-Guide Pickup</label>
+                  <select
+                    value={formData.pickupAvailable ? 'yes' : 'no'}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        pickupAvailable: e.target.value === 'yes'
+                      }))
+                    }
+                  >
+                    <option value="yes">Enabled</option>
+                    <option value="no">Disabled</option>
+                  </select>
+                </div>
+              </div>
+
               <button type="submit" className="seller-submit-btn">
                 {editingId ? 'Save Changes to Listing' : 'Publish Listing and Start Receiving Inquiries'}
               </button>
@@ -352,6 +494,12 @@ const SellerDashboard = () => {
                         {item.currency} {item.price.toLocaleString()}
                       </span>
                       <span>Stock: {item.stock}</span>
+                    </div>
+                    <div className="listing-tags">
+                      <span className="listing-tag">
+                        {item.fulfillmentMode === 'grandee' ? 'Grandee logistics' : 'Seller delivery'}
+                      </span>
+                      {item.pickupAvailable && <span className="listing-tag">Auto-Guide pickup</span>}
                     </div>
                     <p className="listing-contact-line">Location: {item.location}</p>
                     <p className="listing-contact-line">

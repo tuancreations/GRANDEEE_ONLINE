@@ -39,7 +39,7 @@ const Header = () => {
 
         {/* Navigation */}
         <nav className="header-nav">
-          {!isSeller && <Link to="/home" className="nav-link">Home</Link>}
+          {!isSeller && <Link to="/" className="nav-link">Dashboard</Link>}
           {!isSeller && <Link to="/shops" className="nav-link">All Shops</Link>}
           {isSeller && <Link to="/seller/dashboard" className="nav-link">Seller Dashboard</Link>}
           {!user ? (

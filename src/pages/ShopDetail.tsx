@@ -2,21 +2,32 @@ import { useParams, Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useApp } from '../contexts/AppContext';
 import { mockShops, mockProducts } from '../data/mockData';
+import type { Product, Shop } from '../data/mockData';
 import CommunicationPanel from '../components/CommunicationPanel';
 import './ShopDetail.css';
 
 const ShopDetail = () => {
   const { id } = useParams();
   const { activeCommunication, sellerLocation } = useApp();
-  const [shop, setShop] = useState(null);
-  const [shopProducts, setShopProducts] = useState([]);
-  const [showMap, setShowMap] = useState(true);
+  const [shop, setShop] = useState<Shop | null>(null);
+  const [shopProducts, setShopProducts] = useState<Product[]>([]);
+  const [fulfillmentMode, setFulfillmentMode] = useState<'grandee' | 'seller'>('grandee');
+  const [completionMode, setCompletionMode] = useState<'delivery' | 'pickup'>('delivery');
 
   useEffect(() => {
-    const foundShop = mockShops.find(s => s.id === parseInt(id));
-    setShop(foundShop);
+    const shopId = Number(id);
+    if (Number.isNaN(shopId)) {
+      setShop(null);
+      setShopProducts([]);
+      return;
+    }
+
+    const foundShop = mockShops.find((s) => s.id === shopId);
+    setShop(foundShop ?? null);
     if (foundShop) {
-      setShopProducts(mockProducts.filter(p => p.shopId === foundShop.id));
+      setShopProducts(mockProducts.filter((p) => p.shopId === foundShop.id));
+    } else {
+      setShopProducts([]);
     }
   }, [id]);
 
@@ -33,7 +44,8 @@ const ShopDetail = () => {
     window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, '_blank');
   };
 
-  const currentLocation = activeCommunication ? sellerLocation || shop.location.coordinates : shop.location.coordinates;
+  const isLiveForShop = activeCommunication?.shop.id === shop.id;
+  const currentLocation = isLiveForShop ? sellerLocation || shop.location.coordinates : shop.location.coordinates;
 
   return (
     <div className="shop-detail-page">
@@ -94,34 +106,95 @@ const ShopDetail = () => {
                 <p className="address">{shop.location.address}</p>
                 <p className="coordinates">
                   GPS: {currentLocation.lat.toFixed(6)}, {currentLocation.lng.toFixed(6)}
-                  {activeCommunication && (
+                  {isLiveForShop && (
                     <span className="live-indicator">● LIVE</span>
                   )}
                 </p>
               </div>
 
-              {showMap && (
-                <div className="map-container">
-                  <div className="map-placeholder">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ff6b35" strokeWidth="2">
-                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                      <circle cx="12" cy="10" r="3" />
-                    </svg>
-                    <p>Interactive Map</p>
-                    <p className="map-note">
-                      Location: {currentLocation.lat.toFixed(4)}, {currentLocation.lng.toFixed(4)}
+              <div className="map-container">
+                <div className="map-placeholder">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ff6b35" strokeWidth="2">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                  <p>Interactive Map</p>
+                  <p className="map-note">
+                    Location: {currentLocation.lat.toFixed(4)}, {currentLocation.lng.toFixed(4)}
+                  </p>
+                  {isLiveForShop && (
+                    <p className="tracking-note">
+                        Live seller location sharing is active during this session
                     </p>
-                    {activeCommunication && (
-                      <p className="tracking-note">
-                          Live seller location sharing is active during this session
-                      </p>
-                    )}
-                    <button onClick={handleNavigate} className="open-maps-btn">
-                      Open in Google Maps
+                  )}
+                  <button onClick={handleNavigate} className="open-maps-btn">
+                    Open in Google Maps
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            <section className="order-completion-section">
+              <h2>Complete This Order</h2>
+              <p className="completion-subtitle">Choose how fulfillment should happen after negotiation.</p>
+
+              <div className="completion-grid">
+                <article className="completion-card">
+                  <p className="completion-label">Step 1</p>
+                  <h3>Pick fulfillment owner</h3>
+                  <div className="completion-options">
+                    <button
+                      type="button"
+                      className={`completion-option ${fulfillmentMode === 'grandee' ? 'active' : ''}`}
+                      onClick={() => setFulfillmentMode('grandee')}
+                    >
+                      Grandee logistics
+                    </button>
+                    <button
+                      type="button"
+                      className={`completion-option ${fulfillmentMode === 'seller' ? 'active' : ''}`}
+                      onClick={() => setFulfillmentMode('seller')}
+                    >
+                      Seller delivery
                     </button>
                   </div>
-                </div>
-              )}
+                </article>
+
+                <article className="completion-card">
+                  <p className="completion-label">Step 2</p>
+                  <h3>Pick buyer completion mode</h3>
+                  <div className="completion-options">
+                    <button
+                      type="button"
+                      className={`completion-option ${completionMode === 'delivery' ? 'active' : ''}`}
+                      onClick={() => setCompletionMode('delivery')}
+                    >
+                      Delivery
+                    </button>
+                    <button
+                      type="button"
+                      className={`completion-option ${completionMode === 'pickup' ? 'active' : ''}`}
+                      onClick={() => setCompletionMode('pickup')}
+                    >
+                      Auto-Guide pickup
+                    </button>
+                  </div>
+                </article>
+
+                <article className="completion-card summary-card">
+                  <p className="completion-label">Step 3</p>
+                  <h3>Order summary</h3>
+                  <p>
+                    {fulfillmentMode === 'grandee' ? 'Grandee will collect and dispatch your goods.' : 'Seller will arrange dispatch with their preferred courier.'}
+                  </p>
+                  <p>
+                    {completionMode === 'delivery' ? 'Buyer receives delivery at destination.' : 'Buyer will navigate and collect at seller location.'}
+                  </p>
+                  <button type="button" className="completion-cta">
+                    Confirm trade path
+                  </button>
+                </article>
+              </div>
             </section>
 
             <section className="products-section">
