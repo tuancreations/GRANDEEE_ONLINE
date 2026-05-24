@@ -16,6 +16,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
     return null;
   }
 
+  const shopSegmentLabel = shop.segment ? shop.segment.replace('-', ' ') : 'Seller';
   const isRequestOrder = shop.tradeMode === 'request';
   const wishlistActive = isInWishlist(product.id);
 
@@ -31,7 +32,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
         <p className="product-category">{product.category}</p>
 
         <div className="product-tags">
-          <span className="product-tag">{shop.segment.replace('-', ' ')}</span>
+          <span className="product-tag">{shopSegmentLabel}</span>
           {isRequestOrder && <span className="product-tag request">Order request</span>}
           {product.minimumOrderQty && <span className="product-tag">MOQ {product.minimumOrderQty}</span>}
         </div>
