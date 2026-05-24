@@ -12,6 +12,7 @@ const ShopDetail = () => {
     activeCommunication,
     sellerLocation,
     getShopPublicProfile,
+    getManagedShop,
     recordShopView,
     recordLinkClick,
     isChannelFollowed,
@@ -30,14 +31,14 @@ const ShopDetail = () => {
       return;
     }
 
-    const foundShop = mockShops.find((s) => s.id === shopId);
+    const foundShop = getManagedShop(shopId) ?? mockShops.find((s) => s.id === shopId);
     setShop(foundShop ?? null);
     if (foundShop) {
       setShopProducts(mockProducts.filter((p) => p.shopId === foundShop.id));
     } else {
       setShopProducts([]);
     }
-  }, [id]);
+  }, [id, getManagedShop]);
 
   useEffect(() => {
     if (shop) {

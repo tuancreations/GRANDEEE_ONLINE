@@ -11,6 +11,7 @@ const Home = () => {
     searchQuery,
     selectedCategory,
     setSelectedCategory,
+    getManagedShop,
     buyerMarketPartition
   } = useApp();
   const [filteredProducts, setFilteredProducts] = useState(mockProducts);
@@ -20,7 +21,7 @@ const Home = () => {
     let results = mockProducts;
 
     results = results.filter((product) => {
-      const shop = mockShops.find((item) => item.id === product.shopId);
+      const shop = getManagedShop(product.shopId);
       if (!shop) return false;
 
       if (buyerMarketPartition === 'retail') {
@@ -54,7 +55,7 @@ const Home = () => {
     }
 
     setFilteredProducts(results);
-  }, [searchQuery, selectedCategory, buyerMarketPartition]);
+  }, [searchQuery, selectedCategory, buyerMarketPartition, getManagedShop]);
 
   useEffect(() => {
     setActiveView(user?.role ?? 'buyer');
@@ -194,29 +195,33 @@ const Home = () => {
               <Link to="/shops" className="view-all-link">Compare Sellers and Request Quotes →</Link>
             </div>
             <div className="shops-grid">
-              {mockShops.slice(0, 4).map(shop => (
-                <Link to={`/shop/${shop.id}`} key={shop.id} className="shop-preview-card">
-                  <img src={shop.avatar} alt={shop.name} className="shop-avatar" />
-                  <div className="shop-info">
-                    <div className="shop-header">
-                      <h3>{shop.name}</h3>
-                      {shop.verified && (
-                        <svg className="verified-badge" width="18" height="18" viewBox="0 0 24 24" fill="#ff6b35">
-                          <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      )}
+              {mockShops.slice(0, 4).map((shop) => {
+                const managedShop = getManagedShop(shop.id) ?? shop;
+
+                return (
+                  <Link to={`/shop/${shop.id}`} key={shop.id} className="shop-preview-card">
+                    <img src={managedShop.avatar} alt={managedShop.name} className="shop-avatar" />
+                    <div className="shop-info">
+                      <div className="shop-header">
+                        <h3>{managedShop.name}</h3>
+                        {managedShop.verified && (
+                          <svg className="verified-badge" width="18" height="18" viewBox="0 0 24 24" fill="#ff6b35">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                        )}
+                      </div>
+                      <p className="shop-description">{managedShop.description}</p>
+                      <div className="shop-stats">
+                        <span className="rating">★ {managedShop.rating}</span>
+                        <span className="reviews">({managedShop.reviews} buyer reviews)</span>
+                        <span className={`status ${managedShop.online ? 'online' : 'offline'}`}>
+                          {managedShop.online ? 'Available now' : 'Currently offline'}
+                        </span>
+                      </div>
                     </div>
-                    <p className="shop-description">{shop.description}</p>
-                    <div className="shop-stats">
-                      <span className="rating">★ {shop.rating}</span>
-                      <span className="reviews">({shop.reviews} buyer reviews)</span>
-                      <span className={`status ${shop.online ? 'online' : 'offline'}`}>
-                        {shop.online ? 'Available now' : 'Currently offline'}
-                      </span>
-                    </div>
-                  </div>
-                </Link>
-              ))}
+                  </Link>
+                );
+              })}
             </div>
           </section>
         </>

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from '
 import { Navigate } from 'react-router-dom';
 import { useApp } from '../contexts/AppContext';
 import { mockShops } from '../data/mockData';
+import type { Shop } from '../data/mockData';
 import './SellerDashboard.css';
 
 type ListingFormState = {
@@ -35,6 +36,17 @@ type ChannelFormState = {
   description: string;
 };
 
+type ShopDetailsFormState = {
+  name: string;
+  description: string;
+  avatar: string;
+  address: string;
+  country: string;
+  lat: string;
+  lng: string;
+  online: boolean;
+};
+
 const initialFormState: ListingFormState = {
   title: '',
   category: 'Food & Beverages',
@@ -65,6 +77,17 @@ const initialChannelFormState: ChannelFormState = {
   handle: '',
   description: ''
 };
+
+const buildShopDetailsFormState = (shop: Shop): ShopDetailsFormState => ({
+  name: shop.name,
+  description: shop.description,
+  avatar: shop.avatar,
+  address: shop.location.address,
+  country: shop.location.country,
+  lat: String(shop.location.coordinates.lat),
+  lng: String(shop.location.coordinates.lng),
+  online: shop.online
+});
 
 const fallbackImageUrl =
   'https://images.pexels.com/photos/6214378/pexels-photo-6214378.jpeg?auto=compress&cs=tinysrgb&w=300';
@@ -121,15 +144,19 @@ const SellerDashboard = () => {
     addSellerListing,
     updateSellerListing,
     toggleListingStatus,
+    getManagedShop,
     getShopPublicProfile,
     updateShopPublicProfile,
+    updateShopDetails,
     addShopChannel
   } = useApp();
   const [formData, setFormData] = useState<ListingFormState>(initialFormState);
+  const [shopDetailsForm, setShopDetailsForm] = useState<ShopDetailsFormState>(buildShopDetailsFormState(mockShops[0]));
   const [publicStorefrontForm, setPublicStorefrontForm] = useState<PublicStorefrontFormState>(initialPublicStorefrontFormState);
   const [channelForm, setChannelForm] = useState<ChannelFormState>(initialChannelFormState);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [managedShopId, setManagedShopId] = useState<number>(0);
+  const sellerType = user?.sellerType;
 
   if (!user || user.role !== 'seller') {
     return <Navigate to="/signin" replace />;
@@ -140,12 +167,12 @@ const SellerDashboard = () => {
       ...prev,
       contactEmail: prev.contactEmail || user.email
     }));
-  }, [user.email]);
+  }, [user?.email]);
 
   const managedShops = useMemo(() => {
-    const matchingShops = mockShops.filter((shop) => !user.sellerType || shop.segment === user.sellerType);
+    const matchingShops = mockShops.filter((shop) => !sellerType || shop.segment === sellerType);
     return matchingShops.length > 0 ? matchingShops : mockShops;
-  }, [user.sellerType]);
+  }, [sellerType]);
 
   useEffect(() => {
     const nextShopId = managedShops.some((shop) => shop.id === managedShopId)
@@ -155,8 +182,8 @@ const SellerDashboard = () => {
   }, [managedShops, managedShopId]);
 
   const managedShop = useMemo(
-    () => managedShops.find((shop) => shop.id === managedShopId) ?? managedShops[0] ?? mockShops[0],
-    [managedShops, managedShopId]
+    () => getManagedShop(managedShopId) ?? managedShops.find((shop) => shop.id === managedShopId) ?? managedShops[0] ?? mockShops[0],
+    [getManagedShop, managedShops, managedShopId]
   );
 
   const publicProfile = getShopPublicProfile(managedShop.id);
@@ -177,6 +204,10 @@ const SellerDashboard = () => {
       youtube: getHandle('YouTube')
     });
   }, [publicProfile, managedShop.id]);
+
+  useEffect(() => {
+    setShopDetailsForm(buildShopDetailsFormState(managedShop));
+  }, [managedShop.id]);
 
   const sanitizeHandle = (value: string) => value.trim().replace(/^@+/, '');
 
@@ -239,6 +270,38 @@ const SellerDashboard = () => {
     alert('Channel created. Buyers can follow it from the seller profile page.');
   };
 
+  const handleSaveShopDetails = () => {
+    const lat = Number(shopDetailsForm.lat);
+    const lng = Number(shopDetailsForm.lng);
+
+    if (!shopDetailsForm.name.trim() || !shopDetailsForm.address.trim() || !shopDetailsForm.country.trim()) {
+      alert('Please provide the shop name, address, and country.');
+      return;
+    }
+
+    if (Number.isNaN(lat) || Number.isNaN(lng)) {
+      alert('Please enter valid latitude and longitude values.');
+      return;
+    }
+
+    updateShopDetails(managedShop.id, {
+      name: shopDetailsForm.name.trim(),
+      description: shopDetailsForm.description.trim(),
+      avatar: shopDetailsForm.avatar.trim() || managedShop.avatar,
+      online: shopDetailsForm.online,
+      location: {
+        address: shopDetailsForm.address.trim(),
+        country: shopDetailsForm.country.trim(),
+        coordinates: {
+          lat,
+          lng
+        }
+      }
+    });
+
+    alert('Shop details updated. Buyers will see the new location and profile information.');
+  };
+
   const analyticsCards = [
     { title: 'Profile Views', value: publicProfile?.analytics.profileViews ?? 0, hint: 'Buyer profile visits' },
     { title: 'Website Clicks', value: publicProfile?.analytics.websiteClicks ?? 0, hint: 'Traffic to your site' },
@@ -258,7 +321,7 @@ const SellerDashboard = () => {
     [sellerListings]
   );
 
-  const sellerTypeLabel = user.sellerType ? user.sellerType.replace('-', ' ') : 'retailer';
+  const sellerTypeLabel = sellerType ? sellerType.replace('-', ' ') : 'retailer';
 
   const validateAndBuildPayload = () => {
     const price = Number(formData.price);
@@ -392,6 +455,107 @@ const SellerDashboard = () => {
           </div>
         </section>
 
+        <section className="seller-card shop-details-card">
+          <div className="section-heading-row">
+            <h2>Shop Details & Location</h2>
+            <span>Controls store identity</span>
+          </div>
+
+          <p className="storefront-note">
+            Update the shop name, description, avatar, and physical location from the dashboard so buyers always see current information.
+          </p>
+
+          <div className="seller-form-row">
+            <div>
+              <label>Shop Name</label>
+              <input
+                value={shopDetailsForm.name}
+                onChange={(e) => setShopDetailsForm((prev) => ({ ...prev, name: e.target.value }))}
+                placeholder="Store name"
+              />
+            </div>
+
+            <div>
+              <label>Avatar URL</label>
+              <input
+                value={shopDetailsForm.avatar}
+                onChange={(e) => setShopDetailsForm((prev) => ({ ...prev, avatar: e.target.value }))}
+                placeholder="https://..."
+              />
+            </div>
+          </div>
+
+          <label>Shop Description</label>
+          <textarea
+            value={shopDetailsForm.description}
+            onChange={(e) => setShopDetailsForm((prev) => ({ ...prev, description: e.target.value }))}
+            placeholder="Describe your store, products, and service promise"
+          />
+
+          <div className="seller-form-row">
+            <div>
+              <label>Physical Address</label>
+              <input
+                value={shopDetailsForm.address}
+                onChange={(e) => setShopDetailsForm((prev) => ({ ...prev, address: e.target.value }))}
+                placeholder="Street, market, city"
+              />
+            </div>
+
+            <div>
+              <label>Country</label>
+              <input
+                value={shopDetailsForm.country}
+                onChange={(e) => setShopDetailsForm((prev) => ({ ...prev, country: e.target.value }))}
+                placeholder="Country"
+              />
+            </div>
+          </div>
+
+          <div className="seller-form-row">
+            <div>
+              <label>Latitude</label>
+              <input
+                type="number"
+                step="any"
+                value={shopDetailsForm.lat}
+                onChange={(e) => setShopDetailsForm((prev) => ({ ...prev, lat: e.target.value }))}
+                placeholder="0.000000"
+              />
+            </div>
+
+            <div>
+              <label>Longitude</label>
+              <input
+                type="number"
+                step="any"
+                value={shopDetailsForm.lng}
+                onChange={(e) => setShopDetailsForm((prev) => ({ ...prev, lng: e.target.value }))}
+                placeholder="0.000000"
+              />
+            </div>
+          </div>
+
+          <label className="inline-toggle">
+            <input
+              type="checkbox"
+              checked={shopDetailsForm.online}
+              onChange={(e) => setShopDetailsForm((prev) => ({ ...prev, online: e.target.checked }))}
+            />
+            <span>Mark shop as online / available now</span>
+          </label>
+
+          <button type="button" className="seller-submit-btn" onClick={handleSaveShopDetails}>
+            Save Shop Details & Location
+          </button>
+
+          <div className="storefront-preview">
+            <strong>Buyer preview</strong>
+            <p>{shopDetailsForm.name}</p>
+            <span>{shopDetailsForm.address}</span>
+          </div>
+        </section>
+
         <section className="seller-public-grid">
           <article className="seller-card storefront-card">
             <div className="section-heading-row">
@@ -409,7 +573,7 @@ const SellerDashboard = () => {
                 <select value={managedShop.id} onChange={(e) => setManagedShopId(Number(e.target.value))}>
                   {managedShops.map((shop) => (
                     <option key={shop.id} value={shop.id}>
-                      {shop.name}
+                      {(getManagedShop(shop.id) ?? shop).name}
                     </option>
                   ))}
                 </select>

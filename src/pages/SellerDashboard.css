@@ -79,6 +79,21 @@
   opacity: 0.82;
 }
 
+.inline-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin: 0.4rem 0 0.9rem;
+  color: var(--text-strong);
+  font-weight: 700;
+}
+
+.inline-toggle input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--brand-deep);
+}
+
 .seller-public-grid {
   display: grid;
   grid-template-columns: 1.15fr 0.85fr;

@@ -4,7 +4,7 @@ import { mockShops } from '../data/mockData';
 import './AllShops.css';
 
 const AllShops = () => {
-  const { getShopPublicProfile, recordLinkClick } = useApp();
+  const { getShopPublicProfile, getManagedShop, recordLinkClick } = useApp();
 
   const openLink = (shopId: number, url: string, type: 'website' | 'social') => {
     recordLinkClick(shopId, type);
@@ -21,30 +21,31 @@ const AllShops = () => {
 
         <div className="shops-list">
           {mockShops.map((shop) => {
+            const managedShop = getManagedShop(shop.id) ?? shop;
             const publicProfile = getShopPublicProfile(shop.id);
 
             return (
               <Link to={`/shop/${shop.id}`} key={shop.id} className="shop-card">
                 <div className="shop-card-header">
-                  <img src={shop.avatar} alt={shop.name} className="shop-card-avatar" />
-                  {shop.online && <span className="online-dot">●</span>}
+                  <img src={managedShop.avatar} alt={managedShop.name} className="shop-card-avatar" />
+                  {managedShop.online && <span className="online-dot">●</span>}
                 </div>
 
                 <div className="shop-card-body">
                   <div className="shop-card-title">
-                    <h2>{shop.name}</h2>
-                    {shop.verified && (
+                    <h2>{managedShop.name}</h2>
+                    {managedShop.verified && (
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="#ff6b35">
                         <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     )}
                   </div>
 
-                  <p className="shop-card-description">{shop.description}</p>
+                  <p className="shop-card-description">{managedShop.description}</p>
 
                   <p className="shop-card-description">
-                    Segment: {shop.segment.replace('-', ' ')}
-                    {shop.tradeMode === 'request' && ' | Order by request'}
+                    Segment: {managedShop.segment.replace('-', ' ')}
+                    {managedShop.tradeMode === 'request' && ' | Order by request'}
                   </p>
 
                   <div className="shop-card-links">
@@ -85,27 +86,27 @@ const AllShops = () => {
                       <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
                       <circle cx="12" cy="10" r="3" />
                     </svg>
-                    <span>{shop.location.country}</span>
+                    <span>{managedShop.location.country}</span>
                   </div>
 
                   <div className="shop-card-stats">
                     <div className="stat">
-                      <span className="stat-value">★ {shop.rating}</span>
+                      <span className="stat-value">★ {managedShop.rating}</span>
                       <span className="stat-label">Seller Rating</span>
                     </div>
                     <div className="stat">
-                      <span className="stat-value">{shop.reviews}</span>
+                      <span className="stat-value">{managedShop.reviews}</span>
                       <span className="stat-label">Buyer Reviews</span>
                     </div>
                     <div className="stat">
-                      <span className={`stat-badge ${shop.online ? 'online' : 'offline'}`}>
-                        {shop.online ? 'Available now' : 'Currently offline'}
+                      <span className={`stat-badge ${managedShop.online ? 'online' : 'offline'}`}>
+                        {managedShop.online ? 'Available now' : 'Currently offline'}
                       </span>
                     </div>
                   </div>
 
                   <button className="contact-btn">
-                    {shop.tradeMode === 'request' ? 'Send Order Request' : 'Request Quote from Seller'}
+                    {managedShop.tradeMode === 'request' ? 'Send Order Request' : 'Request Quote from Seller'}
                   </button>
                 </div>
               </Link>

@@ -83,10 +83,20 @@
   transform: scale(1.06);
 }
 
+.header-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  min-width: 0;
+}
+
 .header-nav {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.55rem;
+  flex-wrap: wrap;
 }
 
 .nav-link {
@@ -118,6 +128,92 @@
   background: rgba(255, 255, 255, 0.12);
 }
 
+.header-actions {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.menu-toggle {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  display: grid;
+  place-items: center;
+  gap: 2px;
+  padding: 0;
+}
+
+.menu-toggle span {
+  display: block;
+  width: 15px;
+  height: 2px;
+  border-radius: 999px;
+  background: #fff;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.menu-toggle.open span:nth-child(1) {
+  transform: translateY(4px) rotate(45deg);
+}
+
+.menu-toggle.open span:nth-child(2) {
+  opacity: 0;
+}
+
+.menu-toggle.open span:nth-child(3) {
+  transform: translateY(-4px) rotate(-45deg);
+}
+
+.menu-panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.7rem);
+  width: min(240px, calc(100vw - 2rem));
+  padding: 0.45rem;
+  border-radius: 16px;
+  background: rgba(29, 26, 23, 0.98);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.22);
+  display: grid;
+  gap: 0.2rem;
+  z-index: 1300;
+}
+
+.menu-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 10px;
+  color: #f7efe8;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0.65rem 0.75rem;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.menu-link:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+.menu-strong {
+  color: #fff3ea;
+}
+
+.menu-button {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+}
+
+.menu-divider {
+  height: 1px;
+  margin: 0.2rem 0.15rem;
+  background: rgba(255, 255, 255, 0.1);
+}
+
 @media (max-width: 920px) {
   .header-container {
     grid-template-columns: auto auto;
@@ -130,7 +226,7 @@
   }
 
   .header-nav {
-    justify-self: end;
+    justify-content: flex-start;
   }
 }
 
@@ -144,7 +240,13 @@
     height: 48px;
   }
 
-  .nav-link {
+  .menu-toggle {
+    width: 44px;
+    height: 44px;
+  }
+
+  .nav-link,
+  .nav-button {
     padding: 0.5rem 0.72rem;
     font-size: 0.84rem;
   }

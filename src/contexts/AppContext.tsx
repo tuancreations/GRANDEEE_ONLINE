@@ -1,5 +1,5 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import type { Product, SellerSegment, Shop } from '../data/mockData';
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
+import type { Coordinates, Product, SellerSegment, Shop } from '../data/mockData';
 import { mockProducts, mockShops } from '../data/mockData';
 
 type CommunicationType = 'chat' | 'voice' | 'video';
@@ -37,6 +37,18 @@ export type ShopPublicProfile = {
   analytics: SellerAnalytics;
 };
 
+export type ManagedShopUpdates = {
+  name?: string;
+  description?: string;
+  avatar?: string;
+  online?: boolean;
+  location?: {
+    address?: string;
+    country?: string;
+    coordinates?: Partial<Coordinates>;
+  };
+};
+
 export type User = {
   name?: string;
   email: string;
@@ -45,6 +57,7 @@ export type User = {
 };
 
 const USER_STORAGE_KEY = 'grandee_user';
+const SHOP_DETAILS_STORAGE_KEY = 'grandee_shop_details_overrides';
 const SHOP_PROFILES_STORAGE_KEY = 'grandee_shop_public_profiles';
 const FOLLOWED_CHANNELS_STORAGE_KEY = 'grandee_followed_channels';
 
@@ -141,6 +154,41 @@ const getStoredFollowedChannels = (): string[] => {
   }
 };
 
+const getStoredShopDetails = (): Record<number, ManagedShopUpdates> | null => {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+
+  const raw = window.localStorage.getItem(SHOP_DETAILS_STORAGE_KEY);
+  if (!raw) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(raw) as Record<number, ManagedShopUpdates>;
+  } catch {
+    return null;
+  }
+};
+
+const mergeLocation = (
+  base?: ManagedShopUpdates['location'],
+  updates?: ManagedShopUpdates['location']
+) => {
+  if (!base && !updates) {
+    return undefined;
+  }
+
+  return {
+    ...base,
+    ...updates,
+    coordinates: {
+      ...base?.coordinates,
+      ...updates?.coordinates
+    }
+  };
+};
+
 const buildInitialShopProfiles = (): Record<number, ShopPublicProfile> => {
   const storedProfiles = getStoredProfiles();
   return mockShops.reduce<Record<number, ShopPublicProfile>>((profiles, shop) => {
@@ -158,6 +206,21 @@ const buildInitialShopProfiles = (): Record<number, ShopPublicProfile> => {
     return profiles;
   }, {});
 };
+
+const buildInitialShopDetails = (): Record<number, ManagedShopUpdates> => getStoredShopDetails() ?? {};
+
+const mergeShopDetails = (shop: Shop, updates?: ManagedShopUpdates): Shop => ({
+  ...shop,
+  ...updates,
+  location: {
+    ...shop.location,
+    ...updates?.location,
+    coordinates: {
+      ...shop.location.coordinates,
+      ...updates?.location?.coordinates
+    }
+  }
+});
 
 const getStoredUser = (): User | null => {
   if (typeof window === 'undefined') {
@@ -254,6 +317,8 @@ type AppContextType = {
   shopPublicProfiles: Record<number, ShopPublicProfile>;
   getShopPublicProfile: (shopId: number) => ShopPublicProfile | undefined;
   updateShopPublicProfile: (shopId: number, updates: Partial<ShopPublicProfile>) => void;
+  getManagedShop: (shopId: number) => Shop | undefined;
+  updateShopDetails: (shopId: number, updates: ManagedShopUpdates) => void;
   addShopChannel: (shopId: number, channel: Omit<SellerChannel, 'id' | 'followerCount' | 'active' | 'lastUpdate'>) => void;
   toggleChannelFollow: (shopId: number, channelId: number) => void;
   isChannelFollowed: (shopId: number, channelId: number) => boolean;
@@ -278,6 +343,7 @@ type AppProviderProps = {
 export const AppProvider = ({ children }: AppProviderProps) => {
   const [user, setUser] = useState<User | null>(getStoredUser);
   const [shopPublicProfiles, setShopPublicProfiles] = useState<Record<number, ShopPublicProfile>>(buildInitialShopProfiles);
+  const [shopDetailsOverrides, setShopDetailsOverrides] = useState<Record<number, ManagedShopUpdates>>(buildInitialShopDetails);
   const [followedChannelKeys, setFollowedChannelKeys] = useState<string[]>(getStoredFollowedChannels);
   const [sellerListings, setSellerListings] = useState<SellerListing[]>([
     {
@@ -344,6 +410,14 @@ export const AppProvider = ({ children }: AppProviderProps) => {
 
     window.localStorage.setItem(SHOP_PROFILES_STORAGE_KEY, JSON.stringify(shopPublicProfiles));
   }, [shopPublicProfiles]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    window.localStorage.setItem(SHOP_DETAILS_STORAGE_KEY, JSON.stringify(shopDetailsOverrides));
+  }, [shopDetailsOverrides]);
 
   useEffect(() => {
     if (typeof window === 'undefined') {
@@ -419,6 +493,30 @@ export const AppProvider = ({ children }: AppProviderProps) => {
   const isInWishlist = (productId: number) => wishlistItems.includes(productId);
 
   const getShopPublicProfile = (shopId: number) => shopPublicProfiles[shopId];
+
+  const getManagedShop = useCallback((shopId: number) => {
+    const baseShop = mockShops.find((shop) => shop.id === shopId);
+    if (!baseShop) {
+      return undefined;
+    }
+
+    return mergeShopDetails(baseShop, shopDetailsOverrides[shopId]);
+  }, [shopDetailsOverrides]);
+
+  const updateShopDetails = (shopId: number, updates: ManagedShopUpdates) => {
+    setShopDetailsOverrides((prev) => {
+      const current = prev[shopId] ?? {};
+
+      return {
+        ...prev,
+        [shopId]: {
+          ...current,
+          ...updates,
+          location: mergeLocation(current.location, updates.location)
+        }
+      };
+    });
+  };
 
   const updateShopPublicProfile = (shopId: number, updates: Partial<ShopPublicProfile>) => {
     setShopPublicProfiles((prev) => {
@@ -623,6 +721,8 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     shopPublicProfiles,
     getShopPublicProfile,
     updateShopPublicProfile,
+    getManagedShop,
+    updateShopDetails,
     addShopChannel,
     toggleChannelFollow,
     isChannelFollowed,

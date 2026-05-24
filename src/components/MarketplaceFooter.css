@@ -11,51 +11,6 @@
   padding: 0.9rem 1rem 1rem;
 }
 
-.footer-quick-links {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.footer-quick-links a,
-.profile-dropdown button {
-  border-radius: 999px;
-  padding: 0.4rem 0.75rem;
-  background: #f7eee7;
-  color: #5b4c3f;
-  font-size: 0.78rem;
-  font-weight: 700;
-}
-
-.profile-dropdown {
-  position: relative;
-}
-
-.profile-menu {
-  position: absolute;
-  right: 0;
-  top: calc(100% + 6px);
-  min-width: 190px;
-  border-radius: 10px;
-  border: 1px solid var(--line);
-  background: #fff;
-  box-shadow: 0 12px 24px rgba(30, 20, 10, 0.12);
-  display: grid;
-  padding: 0.4rem;
-  z-index: 1200;
-}
-
-.profile-menu a {
-  border-radius: 8px;
-  padding: 0.45rem 0.55rem;
-  background: transparent;
-}
-
-.profile-menu a:hover {
-  background: #fff4eb;
-}
-
 .footer-partitions {
   margin-top: 0.6rem;
   display: flex;

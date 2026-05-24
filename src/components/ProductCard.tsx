@@ -9,8 +9,8 @@ type ProductCardProps = {
 };
 
 const ProductCard = ({ product }: ProductCardProps) => {
-  const { addToCart, toggleWishlist, isInWishlist } = useApp();
-  const shop = mockShops.find(s => s.id === product.shopId);
+  const { addToCart, toggleWishlist, isInWishlist, getManagedShop } = useApp();
+  const shop = getManagedShop(product.shopId) ?? mockShops.find(s => s.id === product.shopId);
 
   if (!shop) {
     return null;
