@@ -1,9 +1,36 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useApp } from '../contexts/AppContext';
 import { mockProducts, mockShops, categories } from '../data/mockData';
 import ProductCard from '../components/ProductCard';
 import './Home.css';
+
+const sellerTypes = [
+  { label: 'Retailers', icon: 'bag' },
+  { label: 'Manufacturers', icon: 'factory' },
+  { label: 'Farmers', icon: 'leaf' },
+  { label: 'Professional Services', icon: 'briefcase' },
+  { label: 'Institutions', icon: 'bank' },
+  { label: 'Distributors', icon: 'truck' }
+];
+
+const categoryIcons: Record<string, string> = {
+  Electronics: 'phone',
+  Fashion: 'dress',
+  'Home & Living': 'sofa',
+  Beauty: 'bottle',
+  Sports: 'ball',
+  'Food & Beverages': 'burger',
+  Toys: 'toy',
+  Books: 'book',
+  'Professional Services': 'briefcase',
+  Institutions: 'bank'
+};
+
+const formatPrice = (currency: string, price: number) => {
+  if (currency === 'USD') return `$${price.toLocaleString()}`;
+  return `${currency} ${price.toLocaleString()}`;
+};
 
 const Home = () => {
   const {
@@ -24,33 +51,21 @@ const Home = () => {
       const shop = getManagedShop(product.shopId);
       if (!shop) return false;
 
-      if (buyerMarketPartition === 'retail') {
-        return shop.segment === 'retailer';
-      }
-
-      if (buyerMarketPartition === 'manufacturer-distributor') {
-        return shop.segment === 'manufacturer-distributor';
-      }
-
-      if (buyerMarketPartition === 'wholesale-farmer') {
-        return shop.segment === 'wholesale-farmer';
-      }
-
-      if (buyerMarketPartition === 'professional-services') {
-        return shop.segment === 'professional-services';
-      }
-
+      if (buyerMarketPartition === 'retail') return shop.segment === 'retailer';
+      if (buyerMarketPartition === 'manufacturer-distributor') return shop.segment === 'manufacturer-distributor';
+      if (buyerMarketPartition === 'wholesale-farmer') return shop.segment === 'wholesale-farmer';
+      if (buyerMarketPartition === 'professional-services') return shop.segment === 'professional-services';
       return shop.segment === 'institution';
     });
 
     if (selectedCategory !== 'All Categories') {
-      results = results.filter(p => p.category === selectedCategory);
+      results = results.filter((product) => product.category === selectedCategory);
     }
 
     if (searchQuery.trim()) {
-      results = results.filter(p =>
-        p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.category.toLowerCase().includes(searchQuery.toLowerCase())
+      results = results.filter((product) =>
+        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        product.category.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
@@ -61,171 +76,180 @@ const Home = () => {
     setActiveView(user?.role ?? 'buyer');
   }, [user?.role]);
 
-  const primaryAction = activeView === 'buyer' ? '/shops' : '/seller/dashboard';
-  const primaryActionLabel = activeView === 'buyer' ? 'Find sellers' : 'Manage listings';
-  const secondaryAction = activeView === 'buyer' ? '/seller/dashboard' : '/shops';
-  const secondaryActionLabel = activeView === 'buyer' ? 'Open seller tools' : 'Switch to buyer view';
-  const isSellerMode = activeView === 'seller';
+  const featuredProducts = filteredProducts.slice(0, 4);
+  const trendingProducts = useMemo(() => mockProducts.slice(0, 6), []);
+  const recentlyViewed = useMemo(() => mockProducts.slice(3, 9), []);
+  const visibleCategories = categories.filter((category) => category !== 'All Categories').slice(0, 8);
   const hasSellerAccess = user?.role === 'seller';
 
-  return (
-    <div className="home-page">
-      <section className="hero-section dashboard-hero">
-        <div className="hero-content">
-          <p className="hero-kicker">Welcome to Grandee Online!</p>
-          <h1 className="hero-title">Buy and Sell instantly from one place</h1>
-          {activeView === 'buyer' ? (
-            <p className="hero-subtitle">Discover products, request quotes, and manage orders instantly.</p>
-          ) : (
-            <p className="hero-subtitle">List products, respond to quotes, and dispatch orders efficiently.</p>
-          )}
-          <div className="dashboard-mode-switch" role="tablist" aria-label="Marketplace dashboard mode">
-            <button
-              type="button"
-              className={`mode-chip ${activeView === 'buyer' ? 'active' : ''}`}
-              onClick={() => setActiveView('buyer')}
-            >
-              Buyer view
-            </button>
-            <button
-              type="button"
-              className={`mode-chip ${activeView === 'seller' ? 'active' : ''}`}
-              onClick={() => setActiveView('seller')}
-            >
-              Seller view
-            </button>
-          </div>
-          <div className="hero-features">
-            {activeView === 'buyer' ? (
-              <>
-                <div className="feature-badge">Search products</div>
-                <div className="feature-badge">Chat sellers live</div>
-                <div className="feature-badge">Delivery handled for you</div>
-              </>
-            ) : (
-              <>
-                <div className="feature-badge">List products</div>
-                <div className="feature-badge">Chat with buyers</div>
-                <div className="feature-badge">Manage dispatch & delivery</div>
-              </>
-            )}
-          </div>
-
-          <div className="hero-actions">
-            <Link to={primaryAction} className="hero-primary-cta">{primaryActionLabel}</Link>
-            <Link to={secondaryAction} className="hero-secondary-cta">{secondaryActionLabel}</Link>
-          </div>
-          <p className="dashboard-help"><Link to="/help">Need help using the dashboard?</Link></p>
-        </div>
-      </section>
-
-      {isSellerMode ? (
+  if (activeView === 'seller') {
+    return (
+      <div className="home-page app-storefront">
         <section className="seller-gateway-section">
           <div className="seller-gateway-card">
-            <p className="seller-gateway-kicker">Seller access only</p>
-            <h2>{hasSellerAccess ? 'Open your real seller dashboard' : 'Register or log in as a seller to continue'}</h2>
+            <p className="seller-gateway-kicker">Seller access</p>
+            <h1>{hasSellerAccess ? 'Open your seller dashboard' : 'Register or log in as a seller'}</h1>
             <p>
-              Seller mode is reserved for managing listings, storefront links, analytics, and buyer update channels.
-              Market listings stay hidden here so you can focus on seller tools.
+              Manage product listings, storefront links, buyer messages, and delivery updates from one focused dashboard.
             </p>
-
-            <div className="seller-gateway-features">
-              <span>Website & social links</span>
-              <span>Performance analytics</span>
-              <span>Buyer update channels</span>
-              <span>Listing management</span>
-            </div>
-
             <div className="seller-gateway-actions">
               {hasSellerAccess ? (
-                <Link to="/seller/dashboard" className="hero-primary-cta">Go to Seller Dashboard</Link>
+                <Link to="/seller/dashboard" className="hero-primary-cta">Go to Dashboard</Link>
               ) : (
                 <>
                   <Link to="/signin" className="hero-primary-cta">Seller Login</Link>
-                  <Link to="/signup" className="hero-secondary-cta">Register as Seller</Link>
+                  <Link to="/signup" className="hero-secondary-cta">Register</Link>
                 </>
               )}
             </div>
-
-            <p className="seller-gateway-note">
-              Need help setting up your seller account? <Link to="/help">Read the seller guide</Link>
-            </p>
+            <button type="button" className="buyer-return" onClick={() => setActiveView('buyer')}>
+              Return to shopping
+            </button>
           </div>
         </section>
-      ) : (
-        <>
-          <section className="categories-section">
-            <div className="categories-scroll">
-              {categories.map(cat => (
-                <button
-                  key={cat}
-                  className={`category-chip ${selectedCategory === cat ? 'active' : ''}`}
-                  onClick={() => setSelectedCategory(cat)}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-          </section>
+      </div>
+    );
+  }
 
-          <section className="products-section">
-            <h2 className="section-title">
-              {searchQuery ? `Search Results for "${searchQuery}"` : 'Marketplace Listings'}
-            </h2>
-            <p className="partition-note">
-              Quick notes: retail shows instant quotes; request-order requires approval. <Link to="/help">More</Link>
-            </p>
+  return (
+    <div className="home-page app-storefront">
+      <section className="commerce-hero" aria-label="Grandee worldwide marketplace">
+        <div className="hero-copy">
+          <h1>Buy &amp; Sell <span>Worldwide</span></h1>
+          <p>Discover millions of products from verified sellers.</p>
+          <div className="hero-actions">
+            <Link to="/shops" className="hero-primary-cta">Shop Now</Link>
+            <button type="button" className="hero-secondary-cta" onClick={() => setActiveView('seller')}>
+              Become a Seller
+            </button>
+          </div>
+        </div>
+        <div className="hero-art" aria-hidden="true">
+          <div className="plane" />
+          <div className="ship">
+            <span />
+            <span />
+            <span />
+          </div>
+          <div className="box-stack">
+            <i />
+            <i />
+            <i />
+          </div>
+        </div>
+      </section>
 
-            {filteredProducts.length === 0 ? (
-              <div className="no-results">
-                <p>No listings match your search. Try another keyword or category.</p>
-              </div>
-            ) : (
-              <div className="products-grid">
-                {filteredProducts.map(product => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
-              </div>
-            )}
-          </section>
+      <div className="carousel-dots" aria-hidden="true">
+        <span className="active" />
+        <span />
+        <span />
+      </div>
 
-          <section className="shops-preview">
-            <div className="section-header">
-              <h2 className="section-title">Top Verified Sellers</h2>
-              <Link to="/shops" className="view-all-link">Compare Sellers and Request Quotes →</Link>
-            </div>
-            <div className="shops-grid">
-              {mockShops.slice(0, 4).map((shop) => {
-                const managedShop = getManagedShop(shop.id) ?? shop;
+      <section className="mobile-section">
+        <div className="mobile-section-header">
+          <h2>Shop by Sellers</h2>
+          <Link to="/shops">View all</Link>
+        </div>
+        <div className="icon-row">
+          {sellerTypes.map((seller) => (
+            <Link to="/shops" className="icon-tile" key={seller.label}>
+              <span className={`tile-icon icon-${seller.icon}`} aria-hidden="true" />
+              <span>{seller.label}</span>
+            </Link>
+          ))}
+        </div>
+      </section>
 
-                return (
-                  <Link to={`/shop/${shop.id}`} key={shop.id} className="shop-preview-card">
-                    <img src={managedShop.avatar} alt={managedShop.name} className="shop-avatar" />
-                    <div className="shop-info">
-                      <div className="shop-header">
-                        <h3>{managedShop.name}</h3>
-                        {managedShop.verified && (
-                          <svg className="verified-badge" width="18" height="18" viewBox="0 0 24 24" fill="#ff6b35">
-                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
-                        )}
-                      </div>
-                      <p className="shop-description">{managedShop.description}</p>
-                      <div className="shop-stats">
-                        <span className="rating">★ {managedShop.rating}</span>
-                        <span className="reviews">({managedShop.reviews} buyer reviews)</span>
-                        <span className={`status ${managedShop.online ? 'online' : 'offline'}`}>
-                          {managedShop.online ? 'Available now' : 'Currently offline'}
-                        </span>
-                      </div>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          </section>
-        </>
-      )}
+      <section className="mobile-section">
+        <div className="mobile-section-header">
+          <h2>Shop by Categories</h2>
+          <Link to="/shops">View all</Link>
+        </div>
+        <div className="icon-row">
+          {visibleCategories.map((category) => (
+            <button
+              key={category}
+              className={`icon-tile ${selectedCategory === category ? 'active' : ''}`}
+              onClick={() => setSelectedCategory(category)}
+              type="button"
+            >
+              <span className={`tile-icon icon-${categoryIcons[category] ?? 'bag'}`} aria-hidden="true" />
+              <span>{category}</span>
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section className="mobile-section">
+        <div className="mobile-section-header">
+          <h2>Featured Products</h2>
+          <Link to="/shops">View all</Link>
+        </div>
+        {featuredProducts.length === 0 ? (
+          <div className="no-results">
+            <p>No listings match your search. Try another keyword or category.</p>
+          </div>
+        ) : (
+          <div className="featured-grid">
+            {featuredProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section className="mobile-section">
+        <div className="mobile-section-header">
+          <h2>Top Sellers</h2>
+          <Link to="/shops">View all</Link>
+        </div>
+        <div className="seller-strip">
+          {mockShops.slice(0, 4).map((shop) => {
+            const managedShop = getManagedShop(shop.id) ?? shop;
+            return (
+              <Link to={`/shop/${shop.id}`} key={shop.id} className="seller-card">
+                <img src={managedShop.avatar} alt={managedShop.name} />
+                <div>
+                  <h3>{managedShop.name}</h3>
+                  <p><strong>{managedShop.rating}</strong> ★</p>
+                  <span>{managedShop.reviews.toLocaleString()} Products</span>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="mobile-section">
+        <div className="mobile-section-header">
+          <h2>Trending Products</h2>
+          <Link to="/shops">View all</Link>
+        </div>
+        <div className="mini-product-row">
+          {trendingProducts.map((product) => (
+            <Link to={`/shop/${product.shopId}`} className="mini-product" key={product.id}>
+              <img src={product.image} alt={product.name} />
+              <button type="button" aria-label="Add to wishlist">♡</button>
+              <strong>{formatPrice(product.currency, product.price)}</strong>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="mobile-section last-section">
+        <div className="mobile-section-header">
+          <h2>Recently Viewed</h2>
+        </div>
+        <div className="mini-product-row">
+          {recentlyViewed.map((product) => (
+            <Link to={`/shop/${product.shopId}`} className="mini-product" key={product.id}>
+              <img src={product.image} alt={product.name} />
+              <button type="button" aria-label="Add to wishlist">♡</button>
+              <strong>{formatPrice(product.currency, product.price)}</strong>
+            </Link>
+          ))}
+        </div>
+      </section>
     </div>
   );
 };
