@@ -37,12 +37,15 @@ const Header = () => {
           <img src={logoImg} alt="Grandee Online" className="logo" />
         </Link>
 
-        {/* Search Bar */}
         {showSearch && (
           <div className="search-bar">
+            <svg className="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.35-4.35" />
+            </svg>
             <input
               type="text"
-              placeholder="Search for products or services..."
+              placeholder="Search for products..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="search-input"
@@ -69,6 +72,11 @@ const Header = () => {
           </nav>
 
           <div className="header-actions" ref={menuRef}>
+            <Link to="/wishlist" className="icon-action" aria-label="Wishlist">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M19.5 12.6 12 20l-7.5-7.4A5 5 0 0 1 12 6a5 5 0 0 1 7.5 6.6Z" />
+              </svg>
+            </Link>
             <button
               type="button"
               className={`menu-toggle ${isMenuOpen ? 'open' : ''}`}
@@ -80,6 +88,12 @@ const Header = () => {
               <span />
               <span />
             </button>
+            <Link to="/profile" className="icon-action" aria-label="Account">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="8" r="4" />
+                <path d="M4 21a8 8 0 0 1 16 0" />
+              </svg>
+            </Link>
 
             {isMenuOpen && (
               <div className="menu-panel">
