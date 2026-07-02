@@ -2,7 +2,7 @@ import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useApp } from "../contexts/AppContext";
 import type { SellerSegment } from "../data/mockData";
-import logoImg from "../assets/grandee-online-logo.jpeg";
+import Logo from "../components/Logo";
 import "./SignUp.css";
 
 const SignUp = () => {
@@ -37,7 +37,7 @@ const SignUp = () => {
 
       {/* Logo + Title */}
       <div className="signup-header">
-        <img src={logoImg} alt="Grandee Online" className="signup-logo" />
+        <Logo className="signup-logo" />
         <h1>Grandee Online</h1>
         <p className="tagline">Source Smarter. Sell Faster.</p>
       </div>

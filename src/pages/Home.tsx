@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useApp } from '../contexts/AppContext';
 import { mockProducts, mockShops, categories } from '../data/mockData';
 import ProductCard from '../components/ProductCard';
+import onlineImage from '../assets/online.jpeg';
 import './Home.css';
 
 const sellerTypes = [
@@ -125,17 +126,7 @@ const Home = () => {
           </div>
         </div>
         <div className="hero-art" aria-hidden="true">
-          <div className="plane" />
-          <div className="ship">
-            <span />
-            <span />
-            <span />
-          </div>
-          <div className="box-stack">
-            <i />
-            <i />
-            <i />
-          </div>
+          <img src={onlineImage} alt="Grandee marketplace" className="hero-image" />
         </div>
       </section>
 

@@ -8,7 +8,9 @@ const MainLayout = () => {
     <>
       <Header />
       <WhatsAppButton />
-      <Outlet />
+      <main className="layout-main">
+        <Outlet />
+      </main>
       <MarketplaceFooter />
     </>
   );

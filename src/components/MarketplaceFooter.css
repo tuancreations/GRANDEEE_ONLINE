@@ -1,4 +1,10 @@
 .market-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1090;
+  width: 100%;
   margin-top: 0;
   border-top: 1px solid var(--line);
   background: #fff;
@@ -6,21 +12,23 @@
 }
 
 .mobile-tabbar {
-  display: none;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  align-items: center;
+  gap: 0.25rem;
+  height: 78px;
+  padding: 0.55rem 0.75rem 0.45rem;
+  background: #fff;
 }
 
 .market-footer-inner {
   max-width: 1320px;
   margin: 0 auto;
-  padding: 0.9rem 1rem 1rem;
+  padding: 0;
 }
 
 .footer-partitions {
-  margin-top: 0.6rem;
-  display: flex;
-  gap: 0.45rem;
-  overflow-x: auto;
-  padding-bottom: 0.2rem;
+  display: none;
 }
 
 .partition-button {
@@ -45,23 +53,87 @@
   font-size: 0.84rem;
 }
 
-@media (max-width: 760px) {
-  .market-footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 1090;
-    border-top-color: #ece7df;
-  }
+.mobile-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  color: #77726d;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.55rem 0.45rem;
+  border-radius: 18px;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
 
+.mobile-tab:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 106, 33, 0.08);
+}
+
+.mobile-tab.active {
+  color: var(--brand);
+  background: rgba(255, 106, 33, 0.12);
+}
+
+.tab-icon {
+  width: 28px;
+  height: 28px;
+  display: block;
+  background: currentColor;
+  border-radius: 999px;
+}
+
+.tab-home {
+  clip-path: polygon(50% 8%, 90% 40%, 82% 40%, 82% 88%, 58% 88%, 58% 62%, 42% 62%, 42% 88%, 18% 88%, 18% 40%, 10% 40%);
+}
+
+.tab-search {
+  position: relative;
+  width: 22px;
+  height: 22px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  background: transparent;
+}
+
+.tab-search::after {
+  content: "";
+  position: absolute;
+  width: 9px;
+  height: 2px;
+  right: -6px;
+  bottom: -3px;
+  border-radius: 999px;
+  background: currentColor;
+  transform: rotate(45deg);
+}
+
+.tab-heart {
+  clip-path: polygon(50% 88%, 12% 50%, 8% 30%, 20% 12%, 40% 14%, 50% 26%, 60% 14%, 80% 12%, 92% 30%, 88% 50%);
+}
+
+.tab-cart {
+  clip-path: polygon(8% 12%, 20% 12%, 28% 62%, 82% 62%, 92% 28%, 26% 28%, 24% 20%, 8% 20%);
+}
+
+.tab-user {
+  clip-path: circle(24% at 50% 30%);
+  position: relative;
+}
+
+.tab-user::after {
+  content: "";
+  position: absolute;
+  inset: 52% 12% 5%;
+  border-radius: 999px 999px 6px 6px;
+  background: currentColor;
+}
+
+@media (max-width: 760px) {
   .market-footer-inner {
     padding: 0;
-  }
-
-  .footer-partitions,
-  .seller-footer p {
-    display: none;
   }
 
   .mobile-tabbar {
@@ -70,71 +142,5 @@
     grid-template-columns: repeat(5, 1fr);
     align-items: center;
     padding: 0.35rem 0.5rem 0.45rem;
-  }
-
-  .mobile-tab {
-    display: grid;
-    place-items: center;
-    gap: 0.2rem;
-    color: #77726d;
-    font-size: 0.67rem;
-    font-weight: 700;
-  }
-
-  .mobile-tab.active {
-    color: var(--brand);
-  }
-
-  .tab-icon {
-    width: 24px;
-    height: 24px;
-    display: block;
-    background: currentColor;
-  }
-
-  .tab-home {
-    clip-path: polygon(50% 8%, 90% 40%, 82% 40%, 82% 88%, 58% 88%, 58% 62%, 42% 62%, 42% 88%, 18% 88%, 18% 40%, 10% 40%);
-  }
-
-  .tab-search {
-    position: relative;
-    width: 22px;
-    height: 22px;
-    border: 2px solid currentColor;
-    border-radius: 50%;
-    background: transparent;
-  }
-
-  .tab-search::after {
-    content: "";
-    position: absolute;
-    width: 9px;
-    height: 2px;
-    right: -6px;
-    bottom: -3px;
-    border-radius: 999px;
-    background: currentColor;
-    transform: rotate(45deg);
-  }
-
-  .tab-heart {
-    clip-path: polygon(50% 88%, 12% 50%, 8% 30%, 20% 12%, 40% 14%, 50% 26%, 60% 14%, 80% 12%, 92% 30%, 88% 50%);
-  }
-
-  .tab-cart {
-    clip-path: polygon(8% 12%, 20% 12%, 28% 62%, 82% 62%, 92% 28%, 26% 28%, 24% 20%, 8% 20%);
-  }
-
-  .tab-user {
-    clip-path: circle(24% at 50% 30%);
-    position: relative;
-  }
-
-  .tab-user::after {
-    content: "";
-    position: absolute;
-    inset: 52% 12% 5%;
-    border-radius: 999px 999px 6px 6px;
-    background: currentColor;
   }
 }
