@@ -63,6 +63,14 @@ const ShopDetail = () => {
   const currentLocation = isLiveForShop ? sellerLocation || shop.location.coordinates : shop.location.coordinates;
   const publicProfile = getShopPublicProfile(shop.id);
 
+  if (!publicProfile) {
+    return (
+      <div className="shop-detail-page">
+        <div className="not-found">Seller profile not found</div>
+      </div>
+    );
+  }
+
   const handleOpenLink = (url: string, type: 'website' | 'social') => {
     recordLinkClick(shop.id, type);
     window.open(url, '_blank', 'noopener,noreferrer');

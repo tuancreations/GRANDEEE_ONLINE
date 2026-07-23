@@ -24,6 +24,10 @@ const AllShops = () => {
             const managedShop = getManagedShop(shop.id) ?? shop;
             const publicProfile = getShopPublicProfile(shop.id);
 
+            if (!publicProfile) {
+              return null;
+            }
+
             return (
               <Link to={`/shop/${shop.id}`} key={shop.id} className="shop-card">
                 <div className="shop-card-header">
